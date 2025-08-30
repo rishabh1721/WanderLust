@@ -1,0 +1,111 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container my-5 fade-in">
+  <div class="text-center mb-5">
+    <h1 class="display-4 fw-bold text-red">Host Your Place on Wanderlust</h1>
+    <p class="lead text-muted">Share your space. Earn income. Create unforgettable guest experiences.</p>
+  </div>
+
+  <section class="row g-4">
+    <% const steps = [
+      {
+        title: "1. List for Free",
+        desc: "It’s free to list your space on Wanderlust. You only pay a service fee when you earn.",
+        icon: "fa-money-check-alt",
+        color: "bg-primary"
+      },
+      {
+        title: "2. Set Your Rules",
+        desc: "Decide when guests can book, what they can access, and how much you charge.",
+        icon: "fa-cogs",
+        color: "bg-warning text-dark"
+      },
+      {
+        title: "3. Welcome Guests",
+        desc: "Start hosting travelers from around the world and provide memorable stays.",
+        icon: "fa-door-open",
+        color: "bg-success"
+      }
+    ]; %>
+
+    <% steps.forEach(step => { %>
+      <div class="col-md-4">
+        <div class="card p-4 text-center shadow-sm hover-rise">
+          <div class="mb-3">
+            <div class="icon-circle <%= step.color %> text-white d-inline-flex align-items-center justify-content-center">
+              <i class="fas <%= step.icon %> fa-2x"></i>
+            </div>
+          </div>
+          <h5 class="fw-bold text-red"><%= step.title %></h5>
+          <p class="text-yellow"><%= step.desc %></p>
+        </div>
+      </div>
+    <% }) %>
+  </section>
+
+  <div class="my-5 p-5 bg-light rounded shadow-sm text-center fade-in">
+    <h3 class="fw-bold text-red mb-3">Why Host with Wanderlust?</h3>
+    <p class="text-muted">We provide tools, protection, and support so you can host with confidence. From marketing your space to helping manage bookings, we’ve got your back.</p>
+
+    <div class="row mt-4">
+      <div class="col-md-4">
+        <i class="fas fa-headset fa-2x text-primary mb-2"></i>
+        <h6 class="fw-bold text-red">24/7 Support</h6>
+        <p class="text-muted small">Our global support team is available anytime to assist with your needs.</p>
+      </div>
+      <div class="col-md-4">
+        <i class="fas fa-shield-alt fa-2x text-success mb-2"></i>
+        <h6 class="fw-bold text-red">Built-in Protection</h6>
+        <p class="text-muted small">Every booking comes with AirCover for Hosts—free damage and liability protection.</p>
+      </div>
+      <div class="col-md-4">
+        <i class="fas fa-rocket fa-2x text-danger mb-2"></i>
+        <h6 class="fw-bold text-red">Easy Start</h6>
+        <p class="text-muted small">We'll guide you through your first booking to ensure a smooth experience.</p>
+      </div>
+    </div>
+
+    <a href="/resources" class="btn btn-outline-primary mt-4 px-4 py-2">View Hosting Resources</a>
+  </div>
+</div>
+
+<style>
+  .fade-in {
+    animation: fadeInUp 0.9s ease-out;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .hover-rise {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 1rem;
+  }
+
+  .hover-rise:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  .icon-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+  }
+
+  .text-red {
+    color: #e53e3e !important; /* Red color for titles */
+  }
+
+  .text-yellow {
+    color: #ffcc00 !important; /* Yellow color for descriptions */
+  }
+</style>

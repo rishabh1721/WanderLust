@@ -1,0 +1,131 @@
+<nav class="navbar navbar-expand-lg sticky-top jeton-navbar px-3 py-2">
+  <div class="container-fluid">
+    <!-- Brand -->
+    <a href="/" class="navbar-brand text-gradient fs-4 fw-bold d-flex align-items-center">
+      <i class="fas fa-compass me-2"></i> Wanderlust
+    </a>
+
+    <!-- Toggler -->
+    <button class="navbar-toggler shadow-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain"
+      aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar Links & Auth -->
+    <div class="collapse navbar-collapse justify-content-between" id="navbarMain">
+      <!-- Centered nav links -->
+      <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-3">
+        <li class="nav-item">
+          <a class="nav-link transition-effect fw-medium" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link transition-effect fw-medium" href="/listings">All Listings</a>
+        </li>
+        <% if (currentUser) { %>
+          <li class="nav-item">
+            <a class="nav-link transition-effect fw-medium" href="/listings/new">Add Listing</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link transition-effect fw-medium" href="/dashboard/<%= currentUser.isHost ? 'host' : 'guest' %>">
+              <i class="fas fa-columns me-1"></i> Dashboard
+            </a>
+          </li>
+        <% } %>
+      </ul>
+
+      <!-- Auth + Dark Mode -->
+      <div class="d-flex align-items-center gap-2">
+        <% if (!currentUser) { %>
+          <a href="/login" class="btn btn-sm btn-outline-dark transition-effect">Login</a>
+          <a href="/register" class="btn btn-sm text-white transition-effect" style="background: var(--gradient);">Sign Up</a>
+        <% } else { %>
+          <span class="fw-medium">👤 Logged in</span>
+          <form action="/logout" method="POST" class="d-inline">
+            <button class="btn btn-sm btn-outline-dark transition-effect" type="submit">Logout</button>
+          </form>
+        <% } %>
+
+        <!-- Dark Mode Toggle -->
+        <button id="dark-mode-toggle" class="btn btn-sm btn-outline-dark transition-effect" title="Toggle Dark Mode">
+          <i id="dark-mode-icon" class="fa-solid fa-moon"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<style>
+  :root {
+    --text-color: #222;
+  }
+  [data-theme='dark'] {
+    --text-color: #f0f0f0;
+  }
+
+  .jeton-navbar {
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+  }
+  [data-theme='dark'] .jeton-navbar {
+    background-color: rgba(18, 18, 18, 0.75);
+    box-shadow: 0 2px 12px rgba(255, 255, 255, 0.05);
+  }
+
+  .nav-link {
+    color: var(--text-color);
+    font-weight: 500;
+  }
+  .nav-link:hover {
+    opacity: 0.8;
+    text-decoration: none;
+  }
+
+  .text-gradient {
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .btn-outline-dark {
+    border-color: var(--text-color);
+    color: var(--text-color);
+  }
+  .btn-outline-dark:hover {
+    background-color: var(--text-color);
+    color: var(--bg-color);
+  }
+
+  .navbar-toggler-icon {
+    filter: invert(0.8);
+  }
+  [data-theme='dark'] .navbar-toggler-icon {
+    filter: invert(0.2);
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const currentTheme = localStorage.getItem("theme") || "light";
+    document.documentElement.setAttribute("data-theme", currentTheme);
+
+    const toggleBtn = document.getElementById("dark-mode-toggle");
+    const icon = document.getElementById("dark-mode-icon");
+
+    const setIcon = theme => {
+      icon.className = theme === "dark" ? "fa-solid fa-sun" : "fa-solid fa-moon";
+    };
+    setIcon(currentTheme);
+
+    toggleBtn.addEventListener("click", () => {
+      const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      localStorage.setItem("theme", next);
+      setIcon(next);
+    });
+  });
+</script>

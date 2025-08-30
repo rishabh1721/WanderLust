@@ -1,0 +1,136 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container my-5 fade-in">
+  <div class="text-center mb-5">
+    <h1 class="display-5 fw-bold text-primary">Explore Wanderlust Destinations</h1>
+    <p class="lead text-muted">Adventure awaits. Discover new places, cultures, and experiences curated just for you.</p>
+  </div>
+
+  <!-- Explore Cards -->
+  <section class="row g-4">
+    <% const explorePlaces = [
+      { title: "Santorini, Greece", img: "https://images.unsplash.com/photo-1507089947368-19c1da9775ae", desc: "Bask in white-washed charm and sunsets over blue-domed villages." },
+      { title: "Kyoto, Japan", img: "https://images.unsplash.com/photo-1549692520-acc6669e2f0c", desc: "Walk through bamboo forests and ancient temples in Japan's cultural heart." },
+      { title: "Banff, Canada", img: "https://images.unsplash.com/photo-1508264165352-258db2ebd59b", desc: "Crystal-clear lakes and snow-capped peaks—nature's paradise." },
+      { title: "Petra, Jordan", img: "https://images.unsplash.com/photo-1548786811-dd6e453ccca7?q=80&w=3542&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", desc: "Uncover the ancient rose-red city carved into desert rock." },
+      { title: "Cape Town, South Africa", img: "https://plus.unsplash.com/premium_photo-1697730061063-ad499e343f26?q=80&w=3432&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", desc: "Where mountains meet oceans, wildlife meets urban life." },
+      { title: "Reykjavík, Iceland", img: "https://plus.unsplash.com/premium_photo-1673002094359-6e2de18bf37b?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", desc: "Explore geysers, glaciers, and geothermal wonders." }
+    ]; %>
+
+    <% explorePlaces.forEach(place => { %>
+      <div class="col-md-6 col-lg-4">
+        <div class="card shadow-sm border-0 transition-card hover-zoom">
+          <img src="<%= place.img %>" class="card-img-top" alt="<%= place.title %>">
+          <div class="card-body">
+            <h5 class="card-title fw-bold text-danger"><%= place.title %></h5>
+            <p class="card-text text-muted"><%= place.desc %></p>
+            <a href="/listings?location=<%= place.title.split(',')[0] %>" class="btn btn-outline-primary btn-sm transition-scale">Discover Stays</a>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  </section>
+
+  <!-- Explore More -->
+  <div class="text-center mt-5">
+    <h4 class="fw-bold text-primary">Let Your Curiosity Lead</h4>
+    <p class="text-muted">Browse thousands of destinations tailored to your style and pace.</p>
+    <a href="/browse" class="btn btn-dark px-4 py-2 transition-scale">Start Browsing</a>
+  </div>
+</div>
+
+<style>
+  .fade-in {
+    animation: fadeInUp 0.8s ease-out;
+  }
+
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .transition-card {
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .hover-zoom:hover {
+    transform: scale(1.03);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-outline-primary:hover {
+    background-color: #0d6efd;
+    color: white;
+  }
+
+  .btn-outline-primary {
+    border-color: #0d6efd;
+    color: #0d6efd;
+  }
+
+  .transition-scale {
+    transition: transform 0.3s ease;
+  }
+
+  .transition-scale:hover {
+    transform: scale(1.05);
+  }
+
+  .card-title {
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: #e74c3c; /* Red title for the cards */
+  }
+
+  body.dark-mode .card-title {
+    color: #e74c3c; /* Red title remains in dark mode */
+  }
+
+  .card-body {
+    padding: 1.5rem;
+  }
+
+  .card-text {
+    color: #6c757d; /* Muted text for card descriptions */
+  }
+
+  .text-muted {
+    color: #6c757d !important;
+  }
+
+  .text-primary {
+    color: #0d6efd !important;
+  }
+
+  .text-danger {
+    color: #e74c3c !important;
+  }
+
+  .btn-dark {
+    background-color: #343a40;
+    border-color: #343a40;
+  }
+
+  .btn-dark:hover {
+    background-color: #23272b;
+    border-color: #1d2124;
+  }
+
+  .btn-outline-primary {
+    border-color: #0d6efd;
+    color: #0d6efd;
+  }
+
+  .btn-outline-primary:hover {
+    background-color: #0d6efd;
+    color: white;
+  }
+</style>

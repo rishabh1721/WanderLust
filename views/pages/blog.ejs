@@ -1,0 +1,112 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container my-5 blog-page fade-in">
+  <div class="text-center mb-5">
+    <h1 class="display-5 fw-bold text-primary">Wanderlust Blog</h1>
+    <p class="lead text-light-emphasis">Get inspired, read stories, and stay updated with travel trends.</p>
+  </div>
+
+  <div class="row g-4">
+    <!-- Blog Card 1 -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card shadow-sm h-100 blog-card hover-lift transition-card">
+        <img src="https://plus.unsplash.com/premium_photo-1661425611469-3a1f8acd6058?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="card-img-top" alt="Travel">
+        <div class="card-body">
+          <h5 class="card-title text-light">Top 10 Destinations for 2025</h5>
+          <p class="card-text text-light-emphasis">Explore the trending places everyone is talking about this year. From hidden gems to bucket list essentials...</p>
+          <a href="#" class="btn btn-outline-primary btn-sm mt-2">Read More</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Blog Card 2 -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card shadow-sm h-100 blog-card hover-lift transition-card">
+        <img src="https://images.unsplash.com/photo-1586227740560-8cf2732c1531?q=80&w=3361&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="card-img-top" alt="Remote work">
+        <div class="card-body">
+          <h5 class="card-title text-light">Remote Working While Traveling</h5>
+          <p class="card-text text-light-emphasis">Learn how digital nomads are changing the way we live and work while exploring the globe...</p>
+          <a href="#" class="btn btn-outline-primary btn-sm mt-2">Read More</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Blog Card 3 -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card shadow-sm h-100 blog-card hover-lift transition-card">
+        <img src="https://images.unsplash.com/photo-1703269698600-a8e3cbaaee9a?q=80&w=3449&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="card-img-top" alt="Eco Travel">
+        <div class="card-body">
+          <h5 class="card-title text-light">Eco-Friendly Travel Tips</h5>
+          <p class="card-text text-light-emphasis">Make your adventures sustainable. Simple tips to minimize your carbon footprint while still enjoying the world...</p>
+          <a href="#" class="btn btn-outline-primary btn-sm mt-2">Read More</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center mt-5">
+    <a href="#" class="btn btn-dark px-4 py-2 transition-scale">View All Articles</a>
+  </div>
+</div>
+
+<style>
+  :root {
+    --light-card-bg: #ffffff;
+    --dark-card-bg: #1f1f1f;
+    --text-light: #f1f1f1;
+    --text-muted: #cccccc;
+  }
+
+  .blog-page .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 1rem;
+    overflow: hidden;
+    background: var(--light-card-bg);
+  }
+
+  body.dark-mode .blog-page .card {
+    background: var(--dark-card-bg);
+  }
+
+  body.dark-mode .card-title,
+  body.dark-mode .card-text,
+  body.dark-mode .lead {
+    color: var(--text-light) !important;
+  }
+
+  body.dark-mode .lead {
+    color: var(--text-muted) !important;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .transition-card {
+    transition: all 0.3s ease-in-out;
+  }
+
+  .transition-scale {
+    transition: transform 0.2s ease;
+  }
+
+  .transition-scale:hover {
+    transform: scale(1.05);
+  }
+
+  .fade-in {
+    animation: fadeInUp 1s ease forwards;
+  }
+
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

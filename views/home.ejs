@@ -1,0 +1,321 @@
+<% layout("layouts/boilerplate") %>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="/styles/style.css">
+
+<style>
+  /* === Global Theme Vars === */
+  :root {
+    --bg: #f9f9fb;
+    --text: #111;
+    --section-bg: #fff;
+    --highlight: #3f68f5;
+    --card-bg: #f4f6f9;
+  }
+
+  [data-theme="dark"] {
+    --bg: #121212;
+    --text: #f5f5f5;
+    --section-bg: #1e1e1e;
+    --highlight: #90caf9;
+    --card-bg: #2a2a2a;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  /* === Hero Section === */
+  .landing-hero {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    height: 100vh;
+    background:
+      linear-gradient(to right, rgba(0,0,0,0.5), rgba(0,0,0,0.3)),
+      url('https://images.unsplash.com/photo-1526772662000-3f88f10405ff?q=80&w=3474&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .hero-content {
+    z-index: 2;
+    max-width: 800px;
+    text-align: center;
+  }
+
+  .hero-content h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .hero-content p {
+    font-size: 1.25rem;
+    color: #ffeb3b;
+    font-weight: 400;
+    margin-bottom: 1.5rem;
+  }
+
+  .btn-primary {
+    background-color: var(--highlight);
+    color: #fff;
+    padding: 0.8rem 2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: background 0.3s ease;
+    display: inline-block;
+  }
+
+  .btn-primary:hover {
+    background-color: #3457d5;
+  }
+
+  .scroll-down {
+    position: absolute;
+    bottom: 20px;
+    font-size: 2rem;
+    color: var(--highlight);
+    animation: bounce 2s infinite;
+    z-index: 2;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(8px); }
+  }
+
+  .blob {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle at 30% 30%, #cfe0fc, transparent 70%);
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: 0;
+  }
+
+  .blob-1 {
+    top: 10%;
+    left: 5%;
+  }
+
+  .blob-2 {
+    bottom: 5%;
+    right: 10%;
+  }
+
+  /* === Features Section === */
+  .features-section {
+    padding: 4rem 2rem;
+    background: var(--section-bg);
+    text-align: center;
+  }
+
+  .features-heading {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 3rem;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .feature-card {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.04);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+  }
+
+  .feature-card i {
+    font-size: 2rem;
+    color: #ff6b35;
+    margin-bottom: 1rem;
+  }
+
+  .feature-card h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .feature-card p {
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  /* === Top Destinations === */
+  .top-destinations {
+    padding: 4rem 2rem;
+    background: var(--section-bg);
+    text-align: center;
+  }
+
+  .top-destinations h2 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .destination-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+  }
+
+  .destination-card {
+    width: 300px;
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+  }
+
+  .destination-card:hover {
+    transform: scale(1.05);
+  }
+
+  .destination-card .overlay {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 1rem;
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(6px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* === Community CTA === */
+  .community-cta {
+    padding: 4rem 2rem;
+    background: var(--card-bg);
+    text-align: center;
+  }
+
+  .community-cta h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .community-cta p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+  }
+
+  .btn-cta {
+    background: var(--highlight);
+    color: black !important;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    transition: background 0.3s ease;
+    font-weight: 600;
+  }
+
+  .btn-cta:hover {
+    background: #2b4bd1;
+  }
+</style>
+
+<!-- === Hero Section === -->
+<section class="landing-hero">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="hero-content" data-aos="fade-up">
+    <h1>Discover Your Next Escape</h1>
+    <p>Find unique places to stay — from cozy cabins to luxury villas — around the world.</p>
+    <a href="/listings" class="btn btn-primary">Explore Listings</a>
+  </div>
+  <a href="#features" class="scroll-down"><i class="fas fa-angle-down"></i></a>
+</section>
+
+<!-- === Features Section === -->
+<section id="features" class="features-section">
+  <h2 class="features-heading" data-aos="fade-up">Why Choose Wanderlust?</h2>
+  <div class="features-grid">
+    <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+      <i class="fas fa-check-circle"></i>
+      <h3>Verified Listings</h3>
+      <p>Every listing is hand-checked for quality, safety, and reliability.</p>
+    </div>
+    <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+      <i class="fas fa-globe-americas"></i>
+      <h3>Explore Globally</h3>
+      <p>Discover hidden gems and hotspots in over 100+ countries.</p>
+    </div>
+    <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+      <i class="fas fa-bolt"></i>
+      <h3>Instant Booking</h3>
+      <p>Secure your next stay in just a few clicks with instant confirmation.</p>
+    </div>
+    <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
+      <i class="fas fa-headset"></i>
+      <h3>24/7 Support</h3>
+      <p>Need help? Our travel support team is always here for you.</p>
+    </div>
+  </div>
+</section>
+
+<!-- === Top Destinations Section === -->
+<section class="top-destinations">
+  <h2>Popular Destinations</h2>
+  <div class="destination-grid">
+    <div class="destination-card" style="background-image: url('https://plus.unsplash.com/premium_photo-1661919210043-fd847a58522d?q=80&w=3020&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
+      <div class="overlay">Paris</div>
+    </div>
+    <div class="destination-card" style="background-image: url('https://plus.unsplash.com/premium_photo-1677829177642-30def98b0963?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
+      <div class="overlay">Bali</div>
+    </div>
+    <div class="destination-card" style="background-image: url('https://images.unsplash.com/photo-1541336032412-2048a678540d?q=80&w=3387&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
+      <div class="overlay">New York</div>
+    </div>
+  </div>
+</section>
+
+<!-- === Community CTA Section === -->
+<section class="community-cta">
+  <h2>Join the Wanderlust Community</h2>
+  <p>Get the best deals and exclusive offers by becoming part of our community.</p>
+  <a href="/register" class="btn-cta">Sign Up Now</a>
+</section>
+
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script>
+  AOS.init();
+</script> 

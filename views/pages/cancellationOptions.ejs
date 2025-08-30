@@ -1,0 +1,126 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container my-5 fade-in cancel-page">
+  <div class="text-center mb-5">
+    <h1 class="display-5 fw-bold text-primary">Cancellation Made Clear</h1>
+    <p class="lead text-light-emphasis">Flexibility and peace of mind, every step of your journey. Learn about our cancellation policies tailored for you.</p>
+  </div>
+
+  <div class="row g-4">
+    <!-- Flexible Policy -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card policy-card shadow-sm hover-lift transition-card border-start border-success border-4">
+        <div class="card-body">
+          <h5 class="card-title text-success">Flexible</h5>
+          <p class="card-text text-light-emphasis">Cancel up to 24 hours before check-in for a full refund. Ideal for spontaneous travelers or changing plans.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Moderate Policy -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card policy-card shadow-sm hover-lift transition-card border-start border-primary border-4">
+        <div class="card-body">
+          <h5 class="card-title text-primary">Moderate</h5>
+          <p class="card-text text-light-emphasis">Cancel up to 5 days before check-in for a full refund. Great balance for planned yet flexible trips.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Strict Policy -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card policy-card shadow-sm hover-lift transition-card border-start border-danger border-4">
+        <div class="card-body">
+          <h5 class="card-title text-danger">Strict</h5>
+          <p class="card-text text-light-emphasis">Full refund only if cancelled within 48 hours of booking and at least 14 days before check-in.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-5">
+    <h3 class="text-light">Need to Cancel?</h3>
+    <p class="text-light-emphasis">You can cancel your booking from your Trips page. Refund timelines may vary based on your payment method and policy type.</p>
+
+    <div class="alert alert-info mt-3">
+      💡 <strong>Tip:</strong> Always check the cancellation policy of each listing before booking. It’s visible under the pricing section.
+    </div>
+  </div>
+
+  <div class="text-center mt-5">
+    <a href="/help" class="btn btn-outline-primary px-4 py-2 transition-scale">Visit Help Center</a>
+  </div>
+</div>
+
+<style>
+  :root {
+    --light-card-bg: #ffffff;
+    --dark-card-bg: #1e1e1e;
+    --text-light: #f1f1f1;
+    --text-muted: #bbbbbb;
+  }
+
+  .cancel-page .card {
+    border-radius: 1rem;
+    background-color: var(--light-card-bg);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  }
+
+  body.dark-mode .cancel-page .card {
+    background-color: var(--dark-card-bg);
+  }
+
+  body.dark-mode .card-text,
+  body.dark-mode .lead,
+  body.dark-mode .text-light-emphasis,
+  body.dark-mode .alert-info {
+    color: var(--text-muted) !important;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 24px rgba(0, 0, 0, 0.1);
+  }
+
+  .fade-in {
+    animation: fadeInUp 0.8s ease forwards;
+  }
+
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .transition-card {
+    transition: all 0.3s ease-in-out;
+  }
+
+  .transition-scale {
+    transition: transform 0.2s ease;
+  }
+
+  .transition-scale:hover {
+    transform: scale(1.05);
+  }
+
+  .card-title {
+    font-weight: 600;
+    font-size: 1.25rem;
+  }
+
+  .alert-info {
+    font-size: 0.95rem;
+    background-color: rgba(0, 123, 255, 0.1);
+    border: none;
+  }
+
+  body.dark-mode .alert-info {
+    background-color: rgba(0, 123, 255, 0.15);
+  }
+</style>

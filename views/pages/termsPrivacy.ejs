@@ -1,0 +1,108 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container py-5 fade-in">
+  <div class="text-center mb-5">
+    <h1 class="display-5 fw-bold text-red">Terms & Privacy</h1>
+    <p class="lead text-yellow">Your trust matters to us. Please review our terms and privacy policies to understand your rights and responsibilities while using Wanderlust.</p>
+  </div>
+
+  <div class="accordion accordion-flush shadow-sm" id="termsAccordion">
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed fw-semibold text-red" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTerms" aria-expanded="false">
+          Terms of Service
+        </button>
+      </h2>
+      <div id="collapseTerms" class="accordion-collapse collapse" data-bs-parent="#termsAccordion">
+        <div class="accordion-body text-yellow">
+          By using Wanderlust, you agree to abide by our platform rules. You are responsible for your own interactions, content, and bookings. Misuse of the service can result in penalties or account suspension.
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed fw-semibold text-red" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePrivacy" aria-expanded="false">
+          Privacy Policy
+        </button>
+      </h2>
+      <div id="collapsePrivacy" class="accordion-collapse collapse" data-bs-parent="#termsAccordion">
+        <div class="accordion-body text-yellow">
+          We collect data to enhance your experience. Your information is encrypted and protected. We do not sell your data. You may review and manage your personal information through your account settings.
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed fw-semibold text-red" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCookies" aria-expanded="false">
+          Cookies & Tracking
+        </button>
+      </h2>
+      <div id="collapseCookies" class="accordion-collapse collapse" data-bs-parent="#termsAccordion">
+        <div class="accordion-body text-yellow">
+          Cookies help us improve our service and personalize content. You may choose to disable cookies in your browser, though some features may be limited as a result.
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed fw-semibold text-red" type="button" data-bs-toggle="collapse" data-bs-target="#collapseChanges" aria-expanded="false">
+          Updates to Policy
+        </button>
+      </h2>
+      <div id="collapseChanges" class="accordion-collapse collapse" data-bs-parent="#termsAccordion">
+        <div class="accordion-body text-yellow">
+          These policies may change over time. We will notify users via email or app notifications if significant changes occur. Continued use constitutes acceptance of any updates.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center mt-4">
+    <a href="/privacy" class="btn btn-outline-dark px-4">Read Full Privacy Policy</a>
+  </div>
+</div>
+
+<style>
+  .fade-in {
+    animation: fadeInUp 0.9s ease-in-out;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .accordion-button {
+    background-color: #f9f9f9;
+    transition: all 0.3s ease;
+  }
+
+  .accordion-button:not(.collapsed) {
+    background-color: #e3f2fd;
+    color: #0d6efd;
+  }
+
+  .accordion-body {
+    background-color: #fff;
+    border-top: 1px solid #ddd;
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .text-red {
+    color: #e53e3e !important; /* Red for titles */
+  }
+
+  .text-yellow {
+    color: #ffcc00 !important; /* Yellow for card paragraphs */
+  }
+</style>

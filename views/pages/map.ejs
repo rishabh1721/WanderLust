@@ -1,0 +1,81 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container-fluid px-0 fade-in">
+  <div class="position-relative">
+    <div id="map" style="height: 80vh;"></div>
+
+    <div class="map-overlay card shadow-lg p-4">
+      <h3 class="fw-bold mb-3">Explore the World</h3>
+      <p class="text-muted">
+        Navigate destinations, discover hidden gems, and plan your next adventure right from our interactive map.
+      </p>
+      <a href="/explore" class="btn btn-primary mt-2">Start Exploring</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  #map {
+    width: 100%;
+    z-index: 1;
+  }
+
+  .map-overlay {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    background-color: rgba(255, 255, 255, 0.95);
+    max-width: 320px;
+    z-index: 999;
+    border-radius: 1rem;
+    animation: fadeInUp 1s ease-in-out;
+  }
+
+  .fade-in {
+    animation: fadeInUp 0.9s ease-out;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const map = L.map("map").setView([28.6139, 77.2090], 4); // Default to India
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 18,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    // Example listings with markers
+    const listings = [
+      {
+        name: "Taj Mahal",
+        lat: 27.1751,
+        lng: 78.0421,
+        desc: "A wonder of the world you must visit!"
+      },
+      {
+        name: "Leh-Ladakh",
+        lat: 34.1526,
+        lng: 77.5770,
+        desc: "Breathtaking mountains and road trips."
+      }
+    ];
+
+    listings.forEach(loc => {
+      L.marker([loc.lat, loc.lng])
+        .addTo(map)
+        .bindPopup(`<strong>${loc.name}</strong><br>${loc.desc}`);
+    });
+  });
+</script>

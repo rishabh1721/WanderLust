@@ -1,0 +1,183 @@
+<%- layout("layouts/boilerplate") %>
+
+<style>
+  :root { --gradient: linear-gradient(135deg, #5d3fd3, #00c6ff); }
+  .form-card {
+    background: var(--card-bg, #fff);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    margin-top: 3rem;
+  }
+  .form-card h2 {
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .add-btn {
+    background: var(--gradient);
+    border: none;
+    color: white;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: transform 0.3s;
+  }
+  .add-btn:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+  }
+  .input-group { position: relative; }
+  .removeImageField {
+    position: absolute;
+    right: 0.75rem;
+    top: 0.75rem;
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    cursor: pointer;
+    color: #e63946;
+  }
+</style>
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="form-card">
+        <h2 class="text-center mb-4">✏️ Edit Listing</h2>
+
+        <form method="POST" action="/listings/<%= listing._id %>?_method=PUT" class="needs-validation" novalidate>
+
+          <!-- Title -->
+          <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input id="title" name="listing[title]" type="text" class="form-control" required
+                   value="<%= listing.title %>">
+            <div class="invalid-feedback">Please provide a title.</div>
+          </div>
+
+          <!-- Description -->
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea id="description" name="listing[description]" rows="3"
+                      class="form-control" required><%= listing.description %></textarea>
+            <div class="invalid-feedback">Please provide a description.</div>
+          </div>
+
+          <!-- Image URLs -->
+          <div class="mb-3">
+            <label class="form-label">Image URLs (optional)</label>
+            <div id="imageInputs">
+              <% // Pre-fill existing URLs; empty array if none %>
+              <% (listing.images || []).forEach(img => { %>
+                <div class="input-group mb-2">
+                  <input name="listing[images][][url]" type="url" class="form-control"
+                         placeholder="https://example.com/photo.jpg" value="<%= img.url %>">
+                  <button type="button" class="removeImageField">✖️</button>
+                  <div class="invalid-feedback">Enter a valid URL or leave blank.</div>
+                </div>
+              <% }) %>
+            </div>
+            <button type="button" id="addImageField"
+                    class="btn btn-outline-primary btn-sm mt-2">➕ Add Another Image</button>
+          </div>
+
+          <!-- Price, Guests, Country -->
+          <div class="row">
+            <div class="mb-3 col-md-4">
+              <label for="price" class="form-label">Price per Night (₹)</label>
+              <input id="price" name="listing[price]" type="number" min="0"
+                     class="form-control" required value="<%= listing.price %>">
+              <div class="invalid-feedback">Enter a valid price.</div>
+            </div>
+            <div class="mb-3 col-md-4">
+              <label for="guests" class="form-label">Max Guests</label>
+              <input id="guests" name="listing[guests]" type="number" min="1"
+                     class="form-control" required value="<%= listing.guests %>">
+              <div class="invalid-feedback">Enter number of guests.</div>
+            </div>
+            <div class="mb-3 col-md-4">
+              <label for="country" class="form-label">Country</label>
+              <input id="country" name="listing[country]" type="text"
+                     class="form-control" required value="<%= listing.country %>">
+              <div class="invalid-feedback">Please enter a country.</div>
+            </div>
+          </div>
+
+          <!-- Location -->
+          <div class="mb-3">
+            <label for="location" class="form-label">City / Location</label>
+            <input id="location" name="listing[location]" type="text"
+                   class="form-control" required value="<%= listing.location %>">
+            <div class="invalid-feedback">Enter a location.</div>
+          </div>
+
+          <!-- Amenities -->
+          <div class="mb-3">
+            <label class="form-label">Amenities</label><br>
+            <% const amenityList = ["Wi-Fi","TV","Air Conditioning","Kitchen","Parking"]; %>
+            <% amenityList.forEach(a => { %>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox"
+                       name="listing[amenities][]" value="<%= a %>"
+                       id="amenity-<%= a.replace(/\s+/g,'-') %>"
+                       <%= listing.amenities.includes(a) ? 'checked' : '' %>>
+                <label class="form-check-label"
+                       for="amenity-<%= a.replace(/\s+/g,'-') %>"><%= a %></label>
+              </div>
+            <% }); %>
+          </div>
+
+          <!-- Submit -->
+          <div class="text-center mt-4">
+            <button class="btn add-btn" type="submit">✏️ Save Changes</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (() => {
+    'use strict';
+    const form = document.querySelector('.needs-validation');
+    form.addEventListener('submit', event => {
+      // Remove empty image fields before submit
+      document.querySelectorAll('#imageInputs .input-group').forEach(w => {
+        const inp = w.querySelector('input[type=url]');
+        if (!inp.value.trim()) w.remove();
+      });
+      // Validate non-empty URLs
+      document.querySelectorAll('input[type=url]').forEach(input => {
+        if (input.value && !input.checkValidity()) {
+          input.classList.add('is-invalid');
+        }
+      });
+      if (!form.checkValidity()) {
+        event.preventDefault(); event.stopPropagation();
+      }
+      form.classList.add('was-validated');
+    });
+    // Add/remove image fields
+    document.getElementById('addImageField').addEventListener('click', () => {
+      const container = document.getElementById('imageInputs');
+      const wrapper = document.createElement('div');
+      wrapper.className = 'input-group mb-2';
+      wrapper.innerHTML = `
+        <input name="listing[images][][url]" type="url" class="form-control"
+               placeholder="https://example.com/photo.jpg">
+        <button type="button" class="removeImageField">✖️</button>
+        <div class="invalid-feedback">Enter a valid URL or leave blank.</div>
+      `;
+      container.appendChild(wrapper);
+      wrapper.querySelector('.removeImageField')
+             .addEventListener('click', () => wrapper.remove());
+    });
+    document.querySelectorAll('.removeImageField').forEach(btn => {
+      btn.addEventListener('click', () => btn.closest('.input-group').remove());
+    });
+  })();
+</script>

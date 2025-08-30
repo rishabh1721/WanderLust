@@ -1,0 +1,23 @@
+<% layout("layouts/boilerplate") -%>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="alert alert-danger shadow p-4 rounded text-center">
+        <h2 class="mb-3">🚨 <%= err.statusCode || 500 %> Error</h2>
+        <p class="lead">
+          <% if (err.message.includes("validation failed")) { %>
+            Invalid input. Please check your form fields and try again.
+          <% } else { %>
+            <%= err.message || "Something went wrong!" %>
+          <% } %>
+        </p>
+
+        <div class="mt-4">
+          <a href="javascript:history.back()" class="btn btn-outline-dark me-2">← Go Back</a>
+          <a href="/" class="btn btn-dark">Home</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

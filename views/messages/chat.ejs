@@ -1,0 +1,1052 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="chat-page-wrapper"
+  data-current-user-id="<%= currentUser && currentUser._id ? currentUser._id.toString() : '' %>"
+  data-conversation-id="<%= conversation && conversation._id ? conversation._id.toString() : '' %>"
+  data-other-user-id="<%= recipient && recipient._id ? recipient._id.toString() : '' %>"
+  data-current-page="<%= currentPage %>"
+  data-total-pages="<%= totalPages %>"
+>
+  <div class="chat-sidebar">
+    <a href="/messages" class="back-to-inbox-btn" aria-label="Back to Inbox">
+      <i class="fas fa-arrow-left"></i> Back to Inbox
+    </a>
+
+    <div class="recipient-info-card">
+      <img src="<%= String(recipient.avatar && recipient.avatar.trim() !== '' ? recipient.avatar : '/images/default-avatar.png') %>"
+           alt="Avatar of <%= String(recipient.username || 'Unknown User') %>"
+           class="recipient-avatar"
+           onerror="this.onerror=null;this.src='/images/default-avatar.png';" loading="lazy"
+      />
+      <h2 class="recipient-username"><%= recipient.username %></h2>
+      <span class="online-status <%= recipient.isOnline ? 'online' : 'offline' %>">
+        <% if (recipient.isOnline) { %>
+          Online
+        <% } else { %>
+          Last seen <%= recipient.lastSeen ? new Date(recipient.lastSeen).toLocaleString() : 'recently' %>
+        <% } %>
+      </span>
+    </div>
+
+    <% if (listing || booking) { %>
+    <div class="context-details-card">
+      <% if (listing) { %>
+      <h3 class="context-card-title">About this Property</h3>
+      <div class="context-item listing-context-item">
+        <img src="<%= String(listing.images && listing.images.length > 0 ? listing.images[0].url : '/images/default-listing.jpg') %>"
+             alt="<%= String(listing.title || 'Listing Image') %>"
+             class="context-thumbnail"
+             onerror="this.onerror=null;this.src='/images/default-listing.jpg';" loading="lazy"
+        />
+        <div class="context-text">
+          <a href="/listings/<%= listing._id %>" class="context-link" aria-label="View listing: <%= listing.title %>"><%= listing.title %></a>
+          <span class="context-price">$<%= listing.price %> per night</span>
+        </div>
+      </div>
+      <% } %>
+
+      <% if (booking) { %>
+      <h3 class="context-card-title">Reservation Details</h3>
+      <div class="context-item booking-context-item">
+        <div class="context-text">
+          <p><strong>Check-in:</strong> <%= new Date(booking.startDate).toLocaleDateString() %></p>
+          <p><strong>Check-out:</strong> <%= new Date(booking.endDate).toLocaleDateString() %></p>
+          <span class="booking-status-badge <%= booking.status ? String(booking.status) : 'unknown-status' %>">
+            <%= (booking.status || 'unknown').toUpperCase() %>
+          </span>
+        </div>
+      </div>
+      <% } %>
+    </div>
+    <% } %>
+  </div>
+
+  <div class="chat-main-content">
+    <header class="chat-header">
+      <div class="header-recipient-info">
+        <img src="<%= String(recipient.avatar && recipient.avatar.trim() !== '' ? recipient.avatar : '/images/default-avatar.png') %>"
+             alt="<%= String(recipient.username || 'Unknown User') %>'s Avatar"
+             class="header-avatar"
+             onerror="this.onerror=null;this.src='/images/default-avatar.png';" loading="lazy"
+        />
+        <h3><%= recipient.username %></h3>
+      </div>
+      </header>
+
+    <div class="messages-display-area" id="messagesBox" aria-live="polite" aria-relevant="additions">
+      <% if (messages.length === 0) { %>
+        <div class="empty-chat-message">
+          <p>No messages yet. Start the conversation!</p>
+        </div>
+      <% } else { %>
+        <%
+          let currentDate = null;
+          // Loop through messages to display them chronologically
+          messages.forEach(msg => {
+            const msgDate = new Date(msg.createdAt).toLocaleDateString();
+            // Add date separator if date changes from previous message
+            if (msgDate !== currentDate) {
+              currentDate = msgDate;
+        %>
+          <div class="date-separator">
+            <span><%= msgDate === new Date().toLocaleDateString() ? 'Today' : msgDate %></span>
+          </div>
+        <% } %>
+
+        <div class="message-bubble-wrapper <%= (msg.sender && msg.sender._id && currentUser && currentUser._id && msg.sender._id.toString() === currentUser._id.toString()) ? 'sent' : 'received' %>"
+             data-message-id="<%= msg._id %>"
+             data-created-at="<%= msg.createdAt.toISOString() %>"
+        >
+          <% if (msg.sender && msg.sender._id && currentUser && currentUser._id && msg.sender._id.toString() !== currentUser._id.toString()) { %>
+            <div class="message-sender-avatar">
+              <img src="<%= String(msg.sender.avatar && msg.sender.avatar.trim() !== '' ? msg.sender.avatar : '/images/default-avatar.png') %>"
+                   alt="Avatar of <%= String(msg.sender.username || 'Unknown User') %>"
+                   class="avatar-small"
+                   onerror="this.onerror=null;this.src='/images/default-avatar.png';" loading="lazy"
+              />
+            </div>
+          <% } %>
+
+          <div class="message-bubble">
+            <% if (msg.messageType === 'text') { %>
+              <div class="message-text-content"><%- (msg.content || '').replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>") %></div>
+            <% } else if (msg.attachment && msg.attachment.url) {
+              const isImage = msg.attachment.mimeType && msg.attachment.mimeType.startsWith('image/');
+              // const isVideo = msg.attachment.mimeType && msg.attachment.mimeType.startsWith('video/'); // Uncomment if backend supports video
+            %>
+              <% if (isImage) { %>
+                <div class="message-image-attachment">
+                  <a href="<%= msg.attachment.url %>" target="_blank" rel="noopener noreferrer" aria-label="View image attachment">
+                    <img src="<%= String(msg.attachment.url) %>"
+                         alt="Attachment image: <%= String(msg.attachment.filename || 'untitled') %>"
+                         class="attachment-preview-img"
+                         loading="lazy"
+                         onerror="this.onerror=null;this.src='/images/file-placeholder.png';"
+                    />
+                  </a>
+                </div>
+              <% } else { %>
+                <div class="message-file-attachment">
+                  <a class="attachment-link" href="<%= msg.attachment.url %>" target="_blank" rel="noopener noreferrer" aria-label="Download file: <%= String(msg.attachment.filename || 'untitled') %>">
+                    <span class="file-icon"><i class="<%= getFileIcon(msg.attachment.mimeType) %>"></i></span>
+                    <span class="file-name"><%= msg.attachment.filename %></span>
+                    <span class="file-size"><%= (msg.attachment.fileSize / (1024 * 1024)).toFixed(2) %> MB</span>
+                  </a>
+                </div>
+              <% } %>
+            <% } %>
+
+            <div class="message-footer">
+              <small class="message-timestamp">
+                <%= new Date(msg.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %>
+              </small>
+              <% if (msg.sender && msg.sender._id && currentUser && currentUser._id && msg.sender._id.toString() === currentUser._id.toString()) { %>
+                <%
+                  let statusLabel = '';
+                  let statusTitle = '';
+                  let statusIconHtml = '';
+                  if (msg.status === 'read') {
+                    statusLabel = 'Message read';
+                    statusTitle = 'READ';
+                    statusIconHtml = '<i class="fas fa-check-double read"></i>';
+                  } else if (msg.status === 'delivered') {
+                    statusLabel = 'Message delivered';
+                    statusTitle = 'DELIVERED';
+                    statusIconHtml = '<i class="fas fa-check-double"></i>';
+                  } else if (msg.status === 'failed') {
+                    statusLabel = 'Message failed to send';
+                    statusTitle = 'FAILED';
+                    statusIconHtml = '<i class="fas fa-exclamation-circle failed"></i>';
+                  } else { // 'sent'
+                    statusLabel = 'Message sent';
+                    statusTitle = 'SENT';
+                    statusIconHtml = '<i class="fas fa-check"></i>';
+                  }
+                %>
+                <span class="message-status-icon" aria-label="<%= String(statusLabel) %>" title="<%= String(statusTitle) %>" data-status="<%= msg.status %>">
+                  <%- statusIconHtml %>
+                </span>
+              <% } %>
+              <button class="delete-message-btn" data-message-id="<%= msg._id %>" aria-label="Delete message for myself" title="Delete for myself">
+                  <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+
+      <% if (hasMore) { %>
+        <div class="load-more-messages-container">
+          <button type="button" id="loadMoreBtn" class="load-more-btn" aria-label="Load older messages">
+            Load Older Messages
+          </button>
+        </div>
+      <% } %>
+    <% } %>
+    </div>
+
+    <div class="typing-indicator" id="typingIndicator" aria-live="polite" aria-atomic="true">
+      <div class="typing-animation">
+        <span></span><span></span><span></span>
+      </div>
+      <span class="typing-text"><%= recipient.username %> is typing...</span>
+    </div>
+
+    <form class="message-input-form" id="chatForm" action="/messages/conversation/<%= conversation._id %>" method="POST" enctype="multipart/form-data" aria-label="Send a new message">
+      <div class="input-main-row">
+        <div class="file-input-group">
+          <label for="attachmentInput" class="attach-file-btn">
+            <i class="fas fa-paperclip"></i>
+            <span class="sr-only">Attach file</span>
+          </label>
+          <input type="file" name="attachment" id="attachmentInput" accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain" aria-label="Attach a file" class="hidden-file-input" />
+        </div>
+        <textarea name="content" id="messageInput" placeholder="Type a message..." maxlength="10000" aria-required="true" aria-label="Message input" aria-describedby="charCount fileHint" autofocus></textarea>
+        <button type="submit" id="sendBtn" class="send-message-btn">
+          <i class="fas fa-paper-plane"></i>
+          <span class="send-btn-text">Send</span>
+        </button>
+      </div>
+
+      <div class="input-bottom-row">
+        <div class="char-counter" id="charCount">0 / 10000</div>
+        <div id="filePreview" class="file-preview-area"></div>
+        <small id="fileHint" class="file-hint-text">Max file size: 25MB. Allowed types: images, PDFs, Word, Excel, Text documents.</small>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="customMessageBox" class="custom-message-box" role="alert" aria-live="assertive" aria-atomic="true" style="display: none;">
+  <div class="message-box-content">
+    <p id="messageBoxText"></p>
+    <button id="messageBoxCloseBtn" class="message-box-close-btn" aria-label="Close message">&times;</button>
+  </div>
+</div>
+
+<script>
+  // This function is globally available for EJS rendering's onerror attributes
+  function handleImageError(imgElement, fallbackSrc) {
+      imgElement.onerror = null;
+      imgElement.src = fallbackSrc;
+  }
+
+  // Helper function to get file icon for EJS rendering
+  function getFileIcon(mimeType) {
+      if (mimeType.includes('pdf')) return 'fas fa-file-pdf';
+      if (mimeType.includes('word') || mimeType.includes('msword') || mimeType.includes('officedocument.wordprocessingml')) return 'fas fa-file-word';
+      if (mimeType.includes('excel') || mimeType.includes('spreadsheetml')) return 'fas fa-file-excel';
+      if (mimeType.includes('text/plain')) return 'fas fa-file-alt';
+      return 'fas fa-file'; // Generic file icon
+  }
+</script>
+
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/chat.js"></script>
+
+<style>
+  /* Base variables for consistent theming */
+  :root {
+    --primary: #FF5A5F; /* Airbnb red */
+    --primary-dark: #E04449;
+    --gray-light: #f8f9fa; /* Lightest gray for backgrounds */
+    --gray-medium: #e9ecef; /* Medium gray for borders, inactive elements */
+    --gray-dark: #6c757d; /* Darker gray for text, icons */
+    --text-color: #212529; /* Main text color */
+    --border-color: #ced4da; /* Default border color */
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --primary-rgb: 255, 90, 95; /* RGB for primary color for rgba() */
+    --chat-bg-color: #f0f2f5;
+    --sidebar-bg-color: #ffffff;
+    --message-sent-bg: linear-gradient(135deg, var(--primary), var(--primary-dark)); /* Gradient for sent */
+    --message-received-bg: #e2e2e2;
+    --message-sent-text: white;
+    --message-received-text: var(--text-color);
+    --input-bg: #fff;
+    --input-border: #ced4da;
+    --input-focus-shadow: rgba(var(--primary-rgb), 0.25);
+  }
+
+  /* Dark mode variables */
+  [data-theme="dark"] {
+    --primary: #FF5A5F;
+    --primary-dark: #E04449;
+    --gray-light: #2d3748; /* Darker background for cards/inputs */
+    --gray-medium: #4a5568; /* Darker borders/separators/received messages */
+    --gray-dark: #a0aec0; /* Lighter gray for muted text */
+    --text-color: #e2e8f0; /* Light text for main content */
+    --border-color: #4a5568; /* Darker border for inputs */
+    --shadow-color: rgba(0, 0, 0, 0.4); /* More prominent shadow in dark mode */
+    --primary-rgb: 255, 90, 95;
+    --chat-bg-color: #1a202c; /* Dark background for chat area */
+    --sidebar-bg-color: #2d3748; /* Dark background for sidebar and input form */
+    --message-sent-bg: linear-gradient(135deg, var(--primary-dark), var(--primary)); /* Gradient for sent */
+    --message-received-bg: #4a5568; /* Darker background for received messages */
+    --message-sent-text: white;
+    --message-received-text: #e2e8f0; /* Light text for received messages */
+    --input-bg: #2d3748;
+    --input-border: #4a5568;
+    --input-focus-shadow: rgba(var(--primary-rgb), 0.4);
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--chat-bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: background-color 0.3s, color 0.3s;
+    overflow: hidden; /* Prevent body scroll, let chat-page-wrapper handle it */
+  }
+
+  /* Main chat layout */
+  .chat-page-wrapper {
+    display: flex;
+    flex-grow: 1;
+    max-width: 1200px;
+    margin: 2rem auto;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px var(--shadow-color);
+    overflow: hidden; /* Important for inner scrolling */
+    background-color: var(--sidebar-bg-color); /* Sidebar background */
+    height: calc(100vh - 4rem); /* Occupy full viewport height minus margins */
+  }
+
+  /* Chat Sidebar */
+  .chat-sidebar {
+    width: 300px;
+    padding: 1.5rem;
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    flex-shrink: 0;
+    overflow-y: auto; /* Enable scrolling for sidebar content */
+    background-color: var(--sidebar-bg-color);
+  }
+
+  .back-to-inbox-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--gray-dark);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: color 0.2s ease;
+    padding: 0.5rem 0; /* Add some padding */
+  }
+  .back-to-inbox-btn:hover {
+    color: var(--primary);
+  }
+
+  .recipient-info-card, .context-details-card {
+    background-color: var(--gray-light); /* Uses gray-light which changes in dark mode */
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05); /* Subtle shadow */
+    transition: background-color 0.3s;
+  }
+
+  .recipient-avatar, .header-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--primary);
+    margin-bottom: 0.75rem;
+    box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.2); /* Ring shadow */
+  }
+
+  .recipient-username {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0.5rem 0;
+    color: var(--text-color);
+  }
+
+  .online-status {
+    font-size: 0.8rem;
+    color: var(--gray-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+  }
+  .online-status.online::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: #28a745; /* Green for online */
+    border-radius: 50%;
+  }
+  .online-status.offline::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: #6c757d; /* Gray for offline */
+    border-radius: 50%;
+  }
+
+  .context-details-card {
+    text-align: left;
+  }
+  .context-card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+    border-bottom: 1px dashed var(--border-color);
+    padding-bottom: 0.5rem;
+  }
+  .context-item {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+  .context-thumbnail {
+    width: 70px;
+    height: 55px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  }
+  .context-text {
+    flex-grow: 1;
+    font-size: 0.9rem;
+  }
+  .context-link {
+    font-weight: 600;
+    color: var(--primary);
+    text-decoration: none;
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+  .context-link:hover {
+    text-decoration: underline;
+  }
+  .context-price {
+    color: var(--gray-dark);
+  }
+  .booking-context-item p {
+    margin: 0.2rem 0;
+  }
+  .booking-status-badge {
+    font-weight: 700;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-top: 0.5rem;
+  }
+  .booking-status-badge.pending { background: #fff3cd; color: #856404; } /* Yellowish */
+  .booking-status-badge.confirmed { background: #d4edda; color: #155724; } /* Greenish */
+  .booking-status-badge.cancelled { background: #f8d7da; color: #721c24; } /* Reddish */
+  .booking-status-badge.unknown-status { background: #e2e6ea; color: #495057; } /* Grayish */
+
+
+  /* Chat Main Content */
+  .chat-main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--chat-bg-color); /* Uses chat-bg-color which changes in dark mode */
+  }
+
+  .chat-header {
+    background-color: var(--sidebar-bg-color); /* Uses sidebar-bg-color which changes in dark mode */
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    flex-shrink: 0; /* Prevent header from shrinking */
+  }
+  .header-recipient-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .header-avatar {
+    width: 40px;
+    height: 40px;
+    border-width: 2px; /* Slightly thinner border for smaller avatar */
+    box-shadow: none; /* No ring shadow for header avatar */
+  }
+  .chat-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-color);
+  }
+
+  .messages-display-area {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background: var(--chat-bg-color); /* Ensures message area background matches chat-bg-color */
+    scroll-behavior: smooth;
+  }
+
+  .empty-chat-message {
+    text-align: center;
+    padding: 2rem;
+    color: var(--gray-dark);
+    font-style: italic;
+  }
+
+  .date-separator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1.5rem 0;
+    position: relative;
+  }
+  .date-separator::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--border-color); /* Uses border-color which changes in dark mode */
+    z-index: 1;
+  }
+  .date-separator span {
+    background: var(--chat-bg-color); /* Uses chat-bg-color for span background */
+    padding: 0 0.75rem;
+    font-size: 0.8rem;
+    color: var(--gray-dark);
+    position: relative;
+    z-index: 2;
+    border-radius: 15px;
+    border: 1px solid var(--border-color); /* Uses border-color for span border */
+  }
+
+  .message-bubble-wrapper {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-end;
+    animation: fadeInUp 0.3s ease-out forwards;
+    opacity: 0;
+    transform: translateY(10px);
+    max-width: 80%; /* Slightly narrower messages */
+  }
+  .message-bubble-wrapper.sent {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+  }
+
+  .message-sender-avatar {
+    flex-shrink: 0;
+  }
+  .avatar-small {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .message-bubble {
+    padding: 0.8rem 1.2rem;
+    border-radius: 20px;
+    position: relative;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    word-break: break-word;
+    font-size: 0.95rem;
+    display: flex; /* Added flex for content and footer alignment */
+    flex-direction: column; /* Stack content and footer */
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+  }
+  .message-bubble-wrapper.sent .message-bubble {
+    background: var(--message-sent-bg); /* Uses message-sent-bg which changes in dark mode */
+    color: var(--message-sent-text); /* Uses message-sent-text which changes in dark mode */
+    border-bottom-right-radius: 8px; /* Pointed corner */
+    box-shadow: 0 2px 8px rgba(var(--primary-rgb), 0.2); /* More prominent shadow for sent */
+  }
+  .message-bubble-wrapper.received .message-bubble {
+    background: var(--message-received-bg); /* Uses message-received-bg which changes in dark mode */
+    color: var(--message-received-text); /* Uses message-received-text which changes in dark mode */
+    border-bottom-left-radius: 8px; /* Pointed corner */
+  }
+
+  .message-text-content {
+    white-space: pre-wrap; /* Preserve whitespace and newlines */
+  }
+
+  .message-image-attachment img {
+    max-width: 250px;
+    max-height: 250px;
+    border-radius: 8px;
+    object-fit: contain;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  .message-image-attachment img:hover {
+    transform: scale(1.02);
+  }
+
+  .message-file-attachment {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.2); /* Semi-transparent white for light mode */
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .message-bubble-wrapper.received .message-file-attachment {
+    background: rgba(0, 0, 0, 0.05); /* Semi-transparent black for received in light mode */
+  }
+  /* Specific dark mode adjustments for file attachment backgrounds */
+  [data-theme="dark"] .message-file-attachment {
+    background: rgba(255, 255, 255, 0.1); /* Lighter semi-transparent for dark mode */
+  }
+  [data-theme="dark"] .message-bubble-wrapper.received .message-file-attachment {
+    background: rgba(255, 255, 255, 0.15); /* Slightly lighter for received in dark mode */
+  }
+
+  .message-file-attachment .attachment-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: inherit;
+    width: 100%;
+  }
+  .message-file-attachment .file-icon {
+    font-size: 1.5rem;
+    color: var(--primary);
+  }
+  .message-file-attachment .file-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+  .message-file-attachment .file-size {
+    font-size: 0.75rem;
+    opacity: 0.8;
+  }
+
+  .message-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+  }
+  .message-timestamp {
+    font-size: 0.7rem;
+    opacity: 0.8;
+  }
+  .message-bubble-wrapper.sent .message-timestamp {
+    color: rgba(255, 255, 255, 0.9);
+  }
+  .message-status-icon {
+    font-size: 0.8rem;
+    margin-left: 0.25rem;
+  }
+  .message-bubble-wrapper.sent .message-status-icon .fas.fa-check { color: rgba(255, 255, 255, 0.9); }
+  .message-bubble-wrapper.sent .message-status-icon .fas.fa-check-double { color: rgba(255, 255, 255, 0.9); }
+  .message-bubble-wrapper.sent .message-status-icon .fas.fa-check-double.read { color: #87CEEB; } /* Light blue for read */
+  .message-bubble-wrapper.sent .message-status-icon .fas.fa-exclamation-circle.failed { color: #dc3545; } /* Red for failed */
+
+  /* Delete message button */
+  .delete-message-btn {
+    background: none;
+    border: none;
+    color: var(--gray-dark); /* Default color, adjusts in dark mode */
+    font-size: 0.8rem;
+    cursor: pointer;
+    margin-left: 0.5rem;
+    opacity: 0.6;
+    transition: opacity 0.2s ease, color 0.2s ease;
+  }
+  .delete-message-btn:hover {
+    opacity: 1;
+    color: var(--primary); /* Highlight on hover */
+  }
+  .message-bubble-wrapper.sent .delete-message-btn {
+    color: rgba(255, 255, 255, 0.7); /* Lighter for sent messages */
+  }
+  .message-bubble-wrapper.sent .delete-message-btn:hover {
+    color: white;
+  }
+
+
+  .load-more-messages-container {
+    text-align: center;
+    margin-top: 1rem;
+  }
+  .load-more-btn {
+    background-color: var(--gray-medium); /* Uses gray-medium which changes in dark mode */
+    color: var(--text-color);
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .load-more-btn:hover {
+    background-color: #dee2e6; /* This might need a dark mode equivalent */
+  }
+  [data-theme="dark"] .load-more-btn:hover {
+    background-color: var(--gray-medium); /* Keep it within dark mode palette */
+    opacity: 0.8;
+  }
+
+  /* Typing Indicator */
+  .typing-indicator {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    color: var(--gray-dark);
+    display: none; /* Hidden by default */
+    align-items: center;
+    background-color: var(--sidebar-bg-color); /* Uses sidebar-bg-color */
+    border-top: 1px solid var(--border-color);
+    flex-shrink: 0; /* Prevent from shrinking */
+  }
+  .typing-animation {
+    display: flex;
+    align-items: center;
+    margin-right: 0.5rem;
+  }
+  .typing-animation span {
+    width: 6px;
+    height: 6px;
+    background: #adb5bd; /* Default dot color */
+    border-radius: 50%;
+    margin: 0 1.5px;
+    animation: typing 1s infinite;
+  }
+  [data-theme="dark"] .typing-animation span {
+    background: var(--gray-dark); /* Use gray-dark for dots in dark mode */
+  }
+  .typing-animation span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-animation span:nth-child(3) { animation-delay: 0.4s; }
+
+
+  /* Message Input Form */
+  .message-input-form {
+    background-color: var(--sidebar-bg-color); /* Uses sidebar-bg-color */
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+    flex-shrink: 0; /* Prevent from shrinking */
+  }
+  .input-main-row {
+    display: flex;
+    align-items: flex-end; /* Align items to the bottom */
+    gap: 0.75rem;
+  }
+  .file-input-group {
+    position: relative;
+    flex-shrink: 0;
+  }
+  .attach-file-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--gray-light); /* Uses gray-light */
+    color: var(--gray-dark);
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+  }
+  .attach-file-btn:hover {
+    background: var(--gray-medium); /* Uses gray-medium */
+    transform: translateY(-1px);
+  }
+  .hidden-file-input {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    z-index: 1;
+  }
+  textarea#messageInput {
+    flex: 1;
+    border: 1px solid var(--input-border); /* Use input-border variable */
+    border-radius: 22px; /* Large border-radius for pill shape */
+    padding: 0.75rem 1.2rem;
+    resize: none;
+    height: 44px; /* Initial height */
+    min-height: 44px;
+    max-height: 120px; /* Max height for textarea expansion */
+    font-family: inherit;
+    font-size: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    background-color: var(--input-bg); /* Use input-bg variable */
+    color: var(--input-text); /* Use input-text variable */
+  }
+  textarea#messageInput::placeholder {
+    color: var(--input-placeholder); /* Use input-placeholder variable */
+  }
+  textarea#messageInput:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--input-focus-shadow); /* Use input-focus-shadow variable */
+  }
+  .send-message-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.1s ease;
+    flex-shrink: 0;
+  }
+  .send-message-btn:hover:not(:disabled) {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+  .send-message-btn:disabled {
+    background: var(--gray-medium); /* Uses gray-medium */
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+  .send-btn-text {
+    display: none; /* Hidden by default, shown on larger screens */
+  }
+
+  .input-bottom-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.75rem;
+    font-size: 0.8rem;
+    color: var(--gray-dark);
+  }
+  .char-counter {
+    flex-shrink: 0;
+    margin-right: 1rem;
+  }
+  .file-hint-text {
+    flex-grow: 1;
+    text-align: right;
+  }
+  .file-preview-area {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 0.75rem;
+    padding: 0.5rem;
+    border-top: 1px dashed var(--border-color);
+  }
+  .file-preview-item {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  .file-preview-image {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+  }
+  .file-preview-icon {
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    background-color: var(--gray-medium); /* Uses gray-medium */
+  }
+  .file-preview-remove { /* Changed from file-preview-remove-btn */
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  .file-preview-remove:hover {
+    background: rgba(0, 0, 0, 0.8);
+  }
+
+  /* Accessibility */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* Animations */
+  @keyframes fadeInUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes typing {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+
+  /* Custom Message Box (Alerts) */
+  .custom-message-box {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--sidebar-bg-color); /* Uses sidebar-bg-color */
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px var(--shadow-color);
+    padding: 15px 20px;
+    z-index: 1000;
+    max-width: 400px;
+    text-align: center;
+    animation: fadeIn 0.3s ease-out;
+  }
+  .custom-message-box.success { border-color: #28a745; background-color: #d4edda; color: #155724; }
+  .custom-message-box.error { border-color: #dc3545; background-color: #f8d7da; color: #721c24; }
+  .custom-message-box.info { border-color: #007bff; background-color: #cfe2ff; color: #084298; }
+
+  /* Dark mode specific for message box */
+  [data-theme="dark"] .custom-message-box.success { background-color: #1a472a; color: #d4edda; border-color: #28a745; }
+  [data-theme="dark"] .custom-message-box.error { background-color: #58151c; color: #f8d7da; border-color: #dc3545; }
+  [data-theme="dark"] .custom-message-box.info { background-color: #0d366b; color: #cfe2ff; border-color: #007bff; }
+
+
+  .message-box-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+  }
+  .message-box-content p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--text-color);
+    flex-grow: 1;
+  }
+  .message-box-close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--gray-dark);
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    transition: color 0.2s ease;
+  }
+  .message-box-close-btn:hover {
+    color: var(--text-color);
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 992px) {
+    .chat-page-wrapper {
+      flex-direction: column;
+      margin: 0;
+      border-radius: 0;
+      height: 100vh; /* Full height on mobile */
+    }
+    .chat-sidebar {
+      width: 100%;
+      max-height: 250px; /* Limit sidebar height on small screens */
+      overflow-y: auto;
+      border-right: none;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1rem;
+    }
+    .chat-main-content {
+      flex-grow: 1;
+      height: calc(100vh - 250px); /* Adjust main content height */
+    }
+    .chat-header {
+      display: none; /* Hide redundant header on small screens */
+    }
+    .messages-display-area {
+      padding: 1rem;
+    }
+    .message-bubble-wrapper {
+      max-width: 95%; /* Wider messages on small screens */
+    }
+    .send-message-btn {
+      width: 40px;
+      height: 40px;
+    }
+    textarea#messageInput {
+      height: 40px;
+      min-height: 40px;
+      border-radius: 20px;
+    }
+    .attach-file-btn {
+      width: 40px;
+      height: 40px;
+    }
+    .input-bottom-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .char-counter {
+      margin-right: 0;
+    }
+    .file-hint-text {
+      text-align: left;
+    }
+  }
+
+  @media (min-width: 993px) {
+    .send-message-btn {
+      width: auto;
+      padding: 0.75rem 1.5rem;
+      border-radius: 22px;
+    }
+    .send-btn-text {
+      display: inline;
+      margin-left: 0.5rem;
+    }
+  }
+</style>

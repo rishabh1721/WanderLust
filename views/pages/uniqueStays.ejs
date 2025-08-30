@@ -1,0 +1,113 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container py-5 fade-in">
+  <div class="text-center mb-5">
+    <h1 class="display-5 fw-bold text-red">Unique Stays</h1>
+    <p class="lead text-yellow">Discover extraordinary places that go beyond the ordinary. From treehouses to castles, experience something magical with every booking.</p>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="card unique-card border-0 shadow-sm">
+        <img src="https://images.unsplash.com/photo-1550355191-aa8a80b41353?q=80&w=3387&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="card-img-top" alt="Treehouse Stay">
+        <div class="card-body">
+          <h5 class="card-title text-red">Luxury Treehouse</h5>
+          <p class="card-text text-yellow">Nestled in the woods, this treehouse combines childhood nostalgia with modern comfort.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card unique-card border-0 shadow-sm">
+        <img src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af" class="card-img-top" alt="Castle Retreat">
+        <div class="card-body">
+          <h5 class="card-title text-red">Medieval Castle</h5>
+          <p class="card-text text-yellow">Live like royalty in a restored 12th-century castle filled with charm and stories.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card unique-card border-0 shadow-sm">
+        <img src="https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba" class="card-img-top" alt="Cave Stay">
+        <div class="card-body">
+          <h5 class="card-title text-red">Desert Cave</h5>
+          <p class="card-text text-yellow">Experience the stillness of the earth in a luxury cave with panoramic desert views.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card unique-card border-0 shadow-sm">
+        <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="card-img-top" alt="Floating Villa">
+        <div class="card-body">
+          <h5 class="card-title text-red">Floating Villa</h5>
+          <p class="card-text text-yellow">Wake up to ocean waves in this serene villa anchored above crystal-clear waters.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card unique-card border-0 shadow-sm">
+        <img src="https://images.unsplash.com/photo-1505691723518-36a5ac3be353" class="card-img-top" alt="Igloo Retreat">
+        <div class="card-body">
+          <h5 class="card-title text-red">Arctic Igloo</h5>
+          <p class="card-text text-yellow">Sleep beneath the Northern Lights in a cozy, climate-controlled glass igloo.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .fade-in {
+    animation: fadeInZoom 0.8s ease;
+  }
+
+  @keyframes fadeInZoom {
+    from {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .unique-card {
+    border-radius: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+  }
+
+  .unique-card:hover {
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .unique-card img {
+    height: 220px;
+    object-fit: cover;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+  }
+
+  .unique-card .card-title {
+    font-weight: 600;
+  }
+
+  .unique-card .card-body {
+    background: #fff;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+  }
+
+  .text-red {
+    color: #e53e3e !important; /* Red for titles */
+  }
+
+  .text-yellow {
+    color: #ffcc00 !important; /* Yellow for card paragraphs */
+  }
+</style>

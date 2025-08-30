@@ -1,0 +1,912 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="show-container" data-theme="<%= (currentUser && currentUser.prefersDark) ? 'dark' : 'light' %>">
+  <!-- Theme Toggle Button -->
+  <div class="theme-toggle-container">
+    <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme">
+      <span class="theme-icon">🌙</span>
+    </button>
+  </div>
+
+  <div class="cards-row">
+    <div class="card image-card">
+      <img
+        src="<%= listing.images && listing.images.length > 0 ? listing.images[0].url : '/images/default.jpg' %>"
+        class="img-fluid rounded"
+        alt="<%= listing.title %>"
+        loading="lazy"
+      >
+      <div class="image-overlay"></div>
+    </div>
+
+    <div class="card info-card">
+      <h1 class="listing-title"><%= listing.title %></h1>
+      <p class="listing-description"><%= listing.description %></p>
+
+      <div class="listing-meta">
+        <div class="meta-item">
+          <span class="meta-icon">📍</span>
+          <strong>Location:</strong> <%= listing.location %>
+        </div>
+        <div class="meta-item">
+          <span class="meta-icon">💰</span>
+          <strong>Price:</strong> ₹<%= listing.price %> / night
+        </div>
+        <div class="meta-item">
+          <span class="meta-icon">👤</span>
+          <strong>Owner:</strong> <%= listing.owner ? listing.owner.username : 'Unknown' %>
+        </div>
+      </div>
+
+      <% if (listing.amenities && listing.amenities.length > 0) { %>
+        <div class="listing-meta mt-3">
+          <div class="meta-item">
+            <span class="meta-icon">✨</span>
+            <strong>Amenities:</strong>
+          </div>
+          <ul class="amenities-list">
+            <% listing.amenities.forEach(amenity => { %>
+              <li><%= amenity %></li>
+            <% }); %>
+          </ul>
+        </div>
+      <% } %>
+
+      <% if (listing.averageRating != null) { %>
+        <div class="average-rating mt-3">
+          <span class="meta-icon">⭐</span>
+          <strong>Average Rating:</strong> <%= listing.averageRating.toFixed(1) %>
+          <span class="stars">
+            <% for (let i = 0; i < Math.round(listing.averageRating); i++) { %>
+              <span class="star filled">★</span>
+            <% } %>
+            <% for (let i = Math.round(listing.averageRating); i < 5; i++) { %>
+              <span class="star empty">☆</span>
+            <% } %>
+          </span>
+        </div>
+      <% } else { %>
+        <div class="mt-3 no-rating">
+          <span class="meta-icon">⭐</span>
+          No ratings yet
+        </div>
+      <% } %>
+
+      <div class="actions mt-4">
+        <% if (listing._id) { %>
+          <a href="/listings/<%= listing._id %>/book" class="btn btn-success">
+            <span class="btn-icon">🛏️</span>
+            Book Now
+          </a>
+        <% } %>
+        <% if (listing.owner
+              && currentUser
+              && listing.owner._id.toString() !== currentUser._id.toString()) { %>
+          <a href="/messages/<%= listing.owner._id %>?listing=<%= listing._id %>" class="btn btn-primary">
+            <span class="btn-icon">✉️</span>
+            Message Owner
+          </a>
+        <% } %>
+        <a href="#reviews" class="btn btn-outline-primary">
+          <span class="btn-icon">💬</span>
+          View Reviews
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card reviews-card mt-5" id="reviews">
+    <h2 class="listing-title">
+      <span class="section-icon">📝</span>
+      Reviews
+    </h2>
+
+    <% if (!listing.reviews || listing.reviews.length === 0) { %>
+      <div class="no-reviews">
+        <span class="empty-icon">💭</span>
+        <p>No reviews yet. Be the first to share your experience!</p>
+      </div>
+    <% } else { %>
+      <div class="reviews-list">
+        <% listing.reviews.forEach(review => { %>
+          <div class="review-item">
+            <div class="review-header">
+              <div class="reviewer-info">
+                <span class="reviewer-avatar">👤</span>
+                <strong><%= review.author ? review.author.username : 'Anonymous' %></strong>
+                <span class="review-label">says:</span>
+              </div>
+              <div class="review-rating">
+                <% for (let i = 0; i < Math.round(review.rating); i++) { %>
+                  <span class="star filled">★</span>
+                <% } %>
+                <% for (let i = Math.round(review.rating); i < 5; i++) { %>
+                  <span class="star empty">☆</span>
+                <% } %>
+              </div>
+            </div>
+            <div class="review-body"><%= review.content %></div>
+            <% if (currentUser
+                  && review.author
+                  && review.author._id.toString() === currentUser._id.toString()) { %>
+              <form
+                action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE"
+                method="POST"
+                class="delete-review-form"
+                onsubmit="return confirm('Delete your review?');"
+              >
+                <button type="submit" class="btn btn-sm btn-danger">
+                  <span class="btn-icon">🗑️</span>
+                  Delete Review
+                </button>
+              </form>
+            <% } %>
+          </div>
+        <% }); %>
+      </div>
+    <% } %>
+
+    <% if (currentUser) { %>
+      <div class="review-form-container">
+        <h3 class="form-title">
+          <span class="form-icon">✍️</span>
+          Share Your Experience
+        </h3>
+        <form action="/listings/<%= listing._id %>/reviews" method="POST" class="review-form">
+          <div class="form-group">
+            <textarea
+              name="review[content]"
+              rows="4"
+              placeholder="Tell others about your stay..."
+              class="form-control review-textarea"
+              required
+            ></textarea>
+          </div>
+
+          <div class="star-rating">
+            <span class="rating-label">Rate your experience:</span>
+            <div class="rating-options">
+              <% for (let i = 1; i <= 5; i++) { %>
+                <label class="rating-option">
+                  <input type="radio" name="review[rating]" value="<%= i %>" required>
+                  <span class="rating-display">
+                    <span class="rating-number"><%= i %></span>
+                    <span class="rating-stars">
+                      <% for (let j = 1; j <= i; j++) { %>★<% } %>
+                    </span>
+                  </span>
+                </label>
+              <% } %>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary submit-review">
+            <span class="btn-icon">📝</span>
+            Submit Review
+          </button>
+        </form>
+      </div>
+    <% } else { %>
+      <div class="login-prompt">
+        <span class="prompt-icon">🔐</span>
+        <p><a href="/login" class="login-link">Login</a> to post a review.</p>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<style>
+  /* Enhanced CSS Variables for Better Theme Support */
+  :root {
+    /* Light mode colors */
+    --text-primary: #1a1a1a;
+    --text-secondary: #4a5568;
+    --text-muted: #718096;
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc; 
+    --card-bg: #ffffff;
+    --border-light: #e2e8f0;
+    --border-medium: #cbd5e0;
+    --shadow-light: rgba(0, 0, 0, 0.05);
+    --shadow-medium: rgba(0, 0, 0, 0.1);
+    --shadow-strong: rgba(0, 0, 0, 0.15);
+    --primary-color: #5d3fd3;
+    --primary-hover: #4c31b8;
+    --primary-gradient: linear-gradient(135deg, #5d3fd3, #00c6ff);
+    --success-color: #48bb78;
+    --success-gradient: linear-gradient(135deg, #48bb78, #38a169);
+    --danger-color: #f56565;
+    --star-filled: #fbbf24;
+    --star-empty: #d1d5db;
+    --input-bg: #ffffff;
+    --input-border: #d1d5db;
+    --input-focus: #5d3fd3;
+    --overlay-bg: rgba(0, 0, 0, 0.1);
+  }
+
+  /* Dark mode colors */
+  [data-theme="dark"] {
+    --text-primary: #f7fafc;
+    --text-secondary: #e2e8f0;
+    --text-muted: #a0aec0;
+    --bg-primary: #1a202c;
+    --bg-secondary: #2d3748;
+    --card-bg: #2d3748;
+    --border-light: #4a5568;
+    --border-medium: #718096;
+    --shadow-light: rgba(0, 0, 0, 0.2);
+    --shadow-medium: rgba(0, 0, 0, 0.3);
+    --shadow-strong: rgba(0, 0, 0, 0.4);
+    --primary-color: #805ad5;
+    --primary-hover: #9f7aea;
+    --success-color: #68d391;
+    --danger-color: #fc8181;
+    --star-filled: #f6e05e;
+    --star-empty: #4a5568;
+    --input-bg: #4a5568;
+    --input-border: #718096;
+    --input-focus: #805ad5;
+    --overlay-bg: rgba(255, 255, 255, 0.05);
+  }
+
+  /* Base styles */
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Theme Toggle */
+  .theme-toggle-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+  }
+
+  .theme-toggle-btn {
+    background: var(--card-bg);
+    border: 2px solid var(--border-light);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px var(--shadow-medium);
+  }
+
+  .theme-toggle-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px var(--shadow-strong);
+  }
+
+  .theme-icon {
+    font-size: 1.5rem;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Container */
+  .show-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+
+  /* Cards Layout */
+  .cards-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px var(--shadow-medium);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid var(--border-light);
+  }
+
+  .card:hover {
+    box-shadow: 0 12px 40px var(--shadow-strong);
+    transform: translateY(-2px);
+  }
+
+  /* Image Card */
+  .image-card {
+    position: relative;
+    overflow: hidden;
+    min-height: 400px;
+  }
+
+  .image-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 16px;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .image-card:hover img {
+    transform: scale(1.05);
+  }
+
+  .image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--overlay-bg);
+    opacity: 0;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 16px;
+  }
+
+  .image-card:hover .image-overlay {
+    opacity: 1;
+  }
+
+  /* Info Card */
+  .info-card {
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .listing-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .section-icon,
+  .meta-icon,
+  .btn-icon,
+  .form-icon,
+  .prompt-icon,
+  .empty-icon {
+    margin-right: 0.5rem;
+    opacity: 0.8;
+  }
+
+  .listing-description {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+  }
+
+  /* Meta Information */
+  .listing-meta {
+    margin-bottom: 2rem;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+    color: var(--text-primary);
+  }
+
+  .meta-item strong {
+    margin-right: 0.5rem;
+    color: var(--text-primary);
+  }
+
+  /* Amenities */
+  .amenities-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+  }
+
+  .amenities-list li {
+    background: var(--primary-gradient);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    box-shadow: 0 2px 8px var(--shadow-light);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .amenities-list li:hover {
+    transform: translateY(-1px);
+  }
+
+  /* Rating */
+  .average-rating,
+  .no-rating {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+
+  .stars {
+    margin-left: 0.5rem;
+  }
+
+  .star {
+    font-size: 1.2rem;
+    margin-right: 0.1rem;
+  }
+
+  .star.filled {
+    color: var(--star-filled);
+  }
+
+  .star.empty {
+    color: var(--star-empty);
+  }
+
+  /* Action Buttons */
+  .actions {
+    margin-top: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-width: 140px;
+    flex: 1;
+  }
+
+  .btn-success {
+    background: var(--success-gradient);
+    color: white;
+    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+  }
+
+  .btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(72, 187, 120, 0.4);
+  }
+
+  .btn-primary {
+    background: var(--primary-color);
+    color: white;
+    box-shadow: 0 4px 12px rgba(93, 63, 211, 0.3);
+  }
+
+  .btn-primary:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(93, 63, 211, 0.4);
+  }
+
+  .btn-outline-primary {
+    background: transparent;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+  }
+
+  .btn-outline-primary:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+  }
+
+  .btn-danger {
+    background: var(--danger-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .btn-danger:hover {
+    background: #e53e3e;
+    transform: translateY(-1px);
+  }
+
+  /* Reviews Section */
+  .reviews-card {
+    padding: 2.5rem;
+    margin-top: 3rem;
+  }
+
+  .no-reviews {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-muted);
+  }
+
+  .empty-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .reviews-list {
+    margin-bottom: 3rem;
+  }
+
+  .review-item {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border-light);
+    margin-bottom: 1.5rem;
+  }
+
+  .review-item:last-child {
+    border-bottom: none;
+  }
+
+  .review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .reviewer-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .reviewer-avatar {
+    font-size: 1.2rem;
+  }
+
+  .review-label {
+    color: var(--text-muted);
+    font-weight: normal;
+  }
+
+  .review-body {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+
+  .delete-review-form {
+    margin-top: 1rem;
+  }
+
+  /* Review Form */
+  .review-form-container {
+    background: var(--bg-secondary);
+    padding: 2rem;
+    border-radius: 16px;
+    border: 1px solid var(--border-light);
+    margin-top: 2rem;
+  }
+
+  .form-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .review-textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid var(--input-border);
+    border-radius: 12px;
+    background: var(--input-bg);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.6;
+    resize: vertical;
+    min-height: 120px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .review-textarea:focus {
+    outline: none;
+    border-color: var(--input-focus);
+    box-shadow: 0 0 0 3px rgba(93, 63, 211, 0.1);
+  }
+
+  .review-textarea::placeholder {
+    color: var(--text-muted);
+    opacity: 0.8;
+  }
+
+  /* Star Rating */
+  .star-rating {
+    margin-bottom: 2rem;
+  }
+
+  .rating-label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+  }
+
+  .rating-options {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .rating-option {
+    cursor: pointer;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--border-light);
+    border-radius: 12px;
+    background: var(--input-bg);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-width: 80px;
+    text-align: center;
+  }
+
+  .rating-option:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+  }
+
+  .rating-option input[type="radio"] {
+    display: none;
+  }
+
+  .rating-option input[type="radio"]:checked + .rating-display {
+    color: var(--primary-color);
+    font-weight: 700;
+  }
+
+  .rating-option input[type="radio"]:checked {
+    background: var(--primary-color);
+    color: white;
+  }
+
+  .rating-option:has(input[type="radio"]:checked) {
+    border-color: var(--primary-color);
+    background: rgba(93, 63, 211, 0.1);
+  }
+
+  .rating-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .rating-number {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .rating-stars {
+    color: var(--star-filled);
+    font-size: 0.9rem;
+  }
+
+  .submit-review {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1rem;
+  }
+
+  /* Login Prompt */
+  .login-prompt {
+    text-align: center;
+    padding: 2rem;
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    border: 1px solid var(--border-light);
+    margin-top: 2rem;
+  }
+
+  .login-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .login-link:hover {
+    color: var(--primary-hover);
+    text-decoration: underline;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 968px) {
+    .cards-row {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    
+    .theme-toggle-container {
+      top: 15px;
+      right: 15px;
+    }
+    
+    .theme-toggle-btn {
+      width: 45px;
+      height: 45px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .show-container {
+      margin: 1rem auto;
+      padding: 0 0.75rem;
+    }
+    
+    .info-card,
+    .reviews-card,
+    .review-form-container {
+      padding: 1.5rem;
+    }
+    
+    .listing-title {
+      font-size: 2rem;
+    }
+    
+    .actions {
+      flex-direction: column;
+    }
+    
+    .btn {
+      width: 100%;
+      min-width: auto;
+    }
+    
+    .rating-options {
+      justify-content: center;
+    }
+    
+    .rating-option {
+      min-width: 70px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .info-card,
+    .reviews-card,
+    .review-form-container {
+      padding: 1rem;
+    }
+    
+    .listing-title {
+      font-size: 1.75rem;
+    }
+    
+    .form-title {
+      font-size: 1.25rem;
+    }
+    
+    .rating-options {
+      gap: 0.5rem;
+    }
+    
+    .rating-option {
+      min-width: 60px;
+      padding: 0.5rem;
+    }
+  }
+
+  /* Dark mode specific adjustments */
+  [data-theme="dark"] .theme-icon {
+    content: "☀️";
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Focus styles for accessibility */
+  *:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+  }
+
+  /* Print styles */
+  @media print {
+    .theme-toggle-container,
+    .actions,
+    .review-form-container {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const themeToggle = document.getElementById('theme-toggle');
+  const showContainer = document.querySelector('.show-container');
+  const themeIcon = document.querySelector('.theme-icon');
+  
+  // Get current theme
+  let currentTheme = showContainer.dataset.theme;
+  
+  // Update icon based on current theme
+  function updateThemeIcon(theme) {
+    themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+  }
+  
+  // Initialize icon
+  updateThemeIcon(currentTheme);
+  
+  // Theme toggle functionality
+  themeToggle.addEventListener('click', function() {
+    currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    showContainer.dataset.theme = currentTheme;
+    updateThemeIcon(currentTheme);
+    
+    // Save preference to localStorage
+    localStorage.setItem('preferredTheme', currentTheme);
+    
+    // Add a nice animation effect
+    themeToggle.style.transform = 'scale(0.9)';
+    setTimeout(() => {
+      themeToggle.style.transform = 'scale(1)';
+    }, 150);
+  });
+  
+  // Load saved theme preference
+  const savedTheme = localStorage.getItem('preferredTheme');
+  if (savedTheme && savedTheme !== currentTheme) {
+    showContainer.dataset.theme = savedTheme;
+    currentTheme = savedTheme;
+    updateThemeIcon(currentTheme);
+  }
+  
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    });
+  });
+  
+  // Add loading animation for images
+  const images = document.querySelectorAll('img[loading="lazy"]');
+  images.forEach(img => {
+    img.addEventListener('load', function() {
+      this.style.opacity = '1';
+    });
+  });
+});
+</script>

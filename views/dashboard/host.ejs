@@ -1,0 +1,591 @@
+<% layout("layouts/boilerplate") %>
+
+<style>
+  /* Base variables for consistent theming */
+  :root {
+    --text-color: #212529;
+    --bg-color: #ffffff;
+    --card-bg: #ffffff;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --gradient: linear-gradient(135deg, #5d3fd3, #00c6ff); /* Original gradient */
+    --primary: #5d3fd3; /* Consistent primary color with gradient start */
+    --primary-dark: #4a32b0; /* Darker shade for hover effects */
+    --primary-airbnb: #FF5A5F; /* Airbnb red, for specific accents */
+    --primary-airbnb-dark: #E04449;
+    --primary-airbnb-rgb: 255, 90, 95; /* RGB for primary Airbnb color */
+    --text-muted: #6c757d; /* Standard muted text color */
+    --text-color-rgb: 33, 37, 41; /* RGB for --text-color */
+  }
+  [data-theme="dark"] {
+    --text-color: #e1e1e1;
+    --bg-color: #121212;
+    --card-bg: #1f1f2e;
+    --shadow-color: rgba(255, 255, 255, 0.05);
+    --text-muted: #b0b0b0;
+    --text-color-rgb: 225, 225, 225; /* RGB for --text-color in dark mode */
+  }
+  body {
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Poppins', sans-serif;
+    transition: background 0.4s, color 0.4s;
+  }
+  .dashboard-grid { /* Renamed from host-container for consistency with guest dashboard */
+    display: grid;
+    grid-template-columns: 300px 1fr; /* Sidebar + Main Content */
+    gap: 2rem;
+    max-width: 1300px;
+    margin: 4rem auto;
+    padding: 0 1rem;
+  }
+  aside.profile-card {
+    background: var(--card-bg);
+    border-radius: 12px; /* Aligned with show.ejs */
+    box-shadow: 0 8px 16px var(--shadow-color); /* Aligned with show.ejs */
+    padding: 2rem 1.5rem;
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+  aside.profile-card:hover {
+    transform: translateY(-3px);
+  }
+  aside.profile-card img {
+    width: 130px;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 4px 10px var(--shadow-color);
+    border: 3px solid var(--primary-airbnb); /* Added border for avatar */
+  }
+  aside.profile-card h3 {
+    margin: 0.8rem 0 0.3rem;
+    font-weight: 700;
+    color: var(--text-color); /* Ensure heading color is correct */
+  }
+  aside.profile-card p {
+    font-size: 0.95rem;
+    color: var(--text-muted); /* Use muted text variable */
+    margin-bottom: 1.5rem;
+  }
+  .profile-actions a {
+    display: flex; /* Use flex for alignment */
+    align-items: center; /* Center items vertically */
+    justify-content: center; /* Center items horizontally */
+    background: var(--gradient);
+    color: #fff;
+    padding: 0.8rem 1rem; /* Aligned with show.ejs buttons */
+    border-radius: 8px;
+    font-weight: 600;
+    margin: 0.5rem 0;
+    text-decoration: none;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    gap: 0.5rem; /* Space between icon and text */
+  }
+  .profile-actions a:hover,
+  .profile-actions a:focus-visible {
+    transform: translateY(-2px);
+    opacity: 0.9;
+    outline: none;
+  }
+  main {
+    width: 100%;
+  }
+  .section-heading {
+    text-align: center;
+    font-size: 2.2rem;
+    margin-bottom: 2rem;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 700;
+    user-select: none;
+  }
+
+  /* Host-specific sections */
+  .host-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+  .stat-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 8px 16px var(--shadow-color);
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform 0.2s ease;
+  }
+  .stat-card:hover {
+    transform: translateY(-3px);
+  }
+  .stat-card .icon {
+    font-size: 2.5rem;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+  }
+  .stat-card h4 {
+    font-size: 1.8rem;
+    margin: 0.5rem 0;
+    font-weight: 700;
+    color: var(--text-color);
+  }
+  .stat-card p {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  .listings-grid, .bookings-grid, .message-previews {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem; /* Add margin below sections */
+  }
+
+  .listing-card, .booking-card, .message-card {
+    background: var(--card-bg);
+    border-radius: 12px; /* Aligned with show.ejs */
+    box-shadow: 0 8px 16px var(--shadow-color); /* Aligned with show.ejs */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    border: 1px solid rgba(var(--primary-airbnb-rgb), 0.1); /* Subtle border for definition */
+  }
+  .listing-card:hover,
+  .listing-card:focus-within,
+  .booking-card:hover,
+  .booking-card:focus-within,
+  .message-card:hover,
+  .message-card:focus-within {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px var(--shadow-color); /* Adjusted for consistency */
+  }
+  .listing-card img, .booking-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+  .listing-info, .booking-body, .message-body {
+    padding: 1.2rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .listing-info h4, .booking-body h5, .message-body h5 {
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .listing-info p, .booking-body p, .message-body p {
+    margin: 0.4rem 0;
+    font-size: 0.95rem;
+    color: var(--text-color); /* Ensure text color is correct */
+  }
+  .text-info {
+    color: #17a2b8; /* Keep specific info color */
+  }
+  .listing-price {
+    font-weight: bold;
+    margin: 0.5rem 0;
+    color: var(--primary);
+  }
+  .listing-actions, .booking-footer {
+    padding: 1rem;
+    text-align: center;
+    background: var(--bg-color);
+    display: flex;
+    gap: 0.5rem;
+  }
+  .listing-actions form,
+  .listing-actions a {
+    flex: 1;
+  }
+  .listing-actions button,
+  .listing-actions a.btn-accent,
+  .booking-footer .btn {
+    width: 100%;
+    text-align: center;
+    padding: 0.8rem 1rem; /* Consistent button padding */
+    border-radius: 8px; /* Consistent button border-radius */
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+    transition: opacity .2s, transform .2s;
+    cursor: pointer;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  .edit-btn { background: var(--primary); color: white; } /* Use primary color for edit */
+  .delete-btn { background: var(--primary-airbnb); color: white; } /* Use Airbnb red for delete */
+  .btn-accent {
+    background: var(--gradient);
+    color: white;
+  }
+  .btn-accent:hover,
+  .edit-btn:hover,
+  .delete-btn:hover {
+    opacity: .9;
+    transform: scale(1.02);
+  }
+  .booking-footer .btn-primary {
+    background: var(--primary);
+    color: white;
+    border: none;
+  }
+  .booking-footer .btn-primary:hover {
+    background: var(--primary-dark);
+    opacity: 1;
+  }
+  .booking-footer .btn-secondary {
+    background: var(--text-muted);
+    color: white;
+    border: none;
+  }
+  .opacity-50 {
+    opacity: 0.5;
+  }
+
+  /* Messaging specific styles (copied from guest.ejs for consistency) */
+  .message-card {
+    text-decoration: none;
+    color: inherit;
+    padding: 1rem; /* Add padding to the card itself */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%; /* Ensure cards take full height in grid */
+  }
+  .message-card:hover {
+    border-color: var(--primary-airbnb); /* Highlight border on hover */
+    background-color: rgba(var(--primary-airbnb-rgb), 0.05); /* Subtle background on hover */
+  }
+  .message-card .message-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem; /* Add padding below header */
+    border-bottom: 1px solid rgba(var(--text-color-rgb), 0.1); /* Subtle separator */
+  }
+  .message-card .message-header img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary-airbnb);
+  }
+  .message-card .message-header h5 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--text-color);
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    flex-grow: 1; /* Allow username to take space */
+  }
+  .message-card .message-header .badge {
+    font-size: 0.75rem;
+    padding: 0.3em 0.6em;
+    border-radius: 0.75rem;
+    background-color: var(--primary-airbnb);
+    min-width: 24px; /* Ensure badge has minimum size */
+    text-align: center;
+  }
+  .message-card .message-content-preview {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    flex-grow: 1; /* Allow content to grow */
+  }
+  .message-card .message-time {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-align: right;
+    margin-top: 0.75rem; /* More space above time */
+  }
+  .message-card .context-details {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+    display: flex; /* Align icon and text */
+    flex-direction: column; /* Stack items vertically */
+    align-items: flex-start; /* Align items to the start */
+    gap: 0.25rem; /* Small gap for stacked items */
+  }
+  .message-card .context-details > div {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem; /* Gap between icon and text */
+    width: 100%; /* Ensure div takes full width for wrapping */
+  }
+  .message-card .context-details i {
+    flex-shrink: 0; /* Prevent icon from shrinking */
+    color: var(--primary); /* Use primary color for context icons */
+  }
+  .message-card .context-details a {
+    color: var(--primary-airbnb);
+    text-decoration: none;
+    word-break: break-word; /* Ensure long titles break words */
+    flex-grow: 1; /* Allow link text to take remaining space */
+  }
+  .message-card .context-details a:hover {
+    text-decoration: underline;
+  }
+
+  /* Pagination styles */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+    list-style: none;
+    padding: 0;
+  }
+  .page-item {
+    margin: 0 0.25rem;
+  }
+  .page-link {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text-color);
+    background-color: var(--card-bg);
+    border: 1px solid var(--shadow-color);
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+  .page-link:hover {
+    background-color: rgba(var(--primary-airbnb-rgb), 0.1);
+    color: var(--primary-airbnb);
+    border-color: var(--primary-airbnb);
+  }
+  .page-item.active .page-link {
+    background-color: var(--primary-airbnb);
+    color: white;
+    border-color: var(--primary-airbnb);
+  }
+  .page-item.disabled .page-link {
+    color: gray;
+    pointer-events: none;
+    background-color: var(--card-bg);
+    border-color: var(--shadow-color);
+  }
+
+
+  @media (max-width: 768px) {
+    .dashboard-grid {
+      grid-template-columns: 1fr;
+    }
+    aside.profile-card {
+      margin-bottom: 2rem;
+    }
+    .listings-grid, .bookings-grid, .message-previews {
+      grid-template-columns: 1fr; /* Stack cards on small screens */
+    }
+    .host-stats-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<div class="dashboard-grid" role="main" aria-label="Host Dashboard">
+  <aside class="profile-card" role="complementary" aria-label="Host Profile Sidebar">
+    <%
+      let currentUserAvatarSrc = '/images/default-avatar.png';
+      if (currentUser.avatar && typeof currentUser.avatar === 'string' && currentUser.avatar.trim() !== '') {
+        currentUserAvatarSrc = currentUser.avatar;
+      }
+    %>
+    <img
+      src="<%= String(currentUserAvatarSrc) %>"
+      alt="<%= currentUser.username %>'s Avatar"
+      onerror="handleImageError(this, '/images/1745563093709.jpg');"
+      loading="lazy"
+      width="130" height="130"
+    >
+    <h3 tabindex="0"><%= currentUser.username %></h3>
+    <p tabindex="0"><%= currentUser.email %></p>
+    <div class="profile-actions">
+      <a href="/dashboard/guest" role="button" tabindex="0">🏠 Switch to Guest View</a> <a href="/messages" class="btn btn-secondary" role="button" tabindex="0">
+        <i class="fas fa-envelope"></i> My Messages
+        <% if (unreadMessageCount > 0) { %>
+          <span class="badge bg-danger ms-2" aria-label="<%= unreadMessageCount %> unread messages"><%= unreadMessageCount %></span>
+        <% } %>
+      </a>
+      <a href="/profile/edit" role="button" tabindex="0">✏️ Edit Profile</a>
+    </div>
+  </aside>
+
+  <main>
+    <h2 class="section-heading">📊 Host Statistics</h2>
+    <div class="host-stats-grid">
+      <div class="stat-card">
+        <div class="icon"><i class="fas fa-list-alt"></i></div>
+        <h4><%= stats.totalListings %></h4>
+        <p>Total Listings</p>
+      </div>
+      <div class="stat-card">
+        <div class="icon"><i class="fas fa-hourglass-half"></i></div>
+        <h4><%= stats.pendingBookings %></h4>
+        <p>Pending Bookings</p>
+      </div>
+      <div class="stat-card">
+        <div class="icon"><i class="fas fa-check-circle"></i></div>
+        <h4><%= stats.confirmedBookings %></h4>
+        <p>Confirmed Bookings</p>
+      </div>
+      <div class="stat-card">
+        <div class="icon"><i class="fas fa-times-circle"></i></div>
+        <h4><%= stats.cancelledBookings %></h4>
+        <p>Cancelled Bookings</p>
+      </div>
+    </div>
+
+    <% /* Removed "Recent Messages" section as per user request */ %>
+
+    <h2 class="section-heading">🏡 Your Listings</h2>
+    <% if (!listings.length) { %>
+      <div class="text-center text-muted fst-italic mb-5" tabindex="0">
+        <p>You haven’t posted any listings yet.</p>
+        <a href="/listings/new" class="btn btn-outline-primary mt-3" role="button" tabindex="0">✨ Add New Listing</a>
+      </div>
+    <% } else { %>
+      <div class="listings-grid">
+        <% listings.forEach(listing => { %>
+          <% 
+            const listingImgUrl = listing.images && listing.images.length > 0 && typeof listing.images[0].url === 'string' && listing.images[0].url.trim() !== ''
+              ? listing.images[0].url
+              : '/images/default-listing.jpg';
+          %>
+          <article class="listing-card" tabindex="0" aria-label="Listing: <%= listing.title %>">
+            <img
+              src="<%= String(listingImgUrl) %>"
+              alt="<%= listing.title %>"
+              onerror="handleImageError(this, '/images/fallback.jpg');"
+              loading="lazy"
+              width="100%" height="200"
+            >
+            <div class="listing-info">
+              <h4><%= listing.title %></h4>
+              <p><i class="fas fa-map-marker-alt"></i> <%= listing.location %></p>
+              <p class="listing-price">₹ <%= listing.price %> / night</p>
+            </div>
+            <div class="listing-actions">
+              <a href="/listings/<%= listing._id %>/edit" class="edit-btn" role="button">✏️ Edit</a>
+              <form action="/listings/<%= listing._id %>?_method=DELETE" method="POST" onsubmit="return confirm('Are you sure you want to delete this listing?');">
+                <button type="submit" class="delete-btn">🗑️ Delete</button>
+              </form>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+    <% } %>
+
+    <h2 class="section-heading">🗓️ Recent Bookings for Your Listings</h2>
+    <% if (!bookings.length) { %>
+      <div class="text-center text-muted fst-italic" tabindex="0">
+        <p>No bookings have been made for your listings yet.</p>
+      </div>
+    <% } else { %>
+      <div class="bookings-grid">
+        <% bookings.forEach(booking => { %>
+          <% 
+            const bookingListingImgUrl = booking.listing && booking.listing.images && booking.listing.images.length > 0 && typeof booking.listing.images[0].url === 'string' && booking.listing.images[0].url.trim() !== ''
+              ? booking.listing.images[0].url
+              : '/images/fallback.jpg';
+          %>
+          <article class="booking-card" tabindex="0" aria-label="Booking by <%= booking.user ? booking.user.username : 'Unknown User' %> for <%= booking.listing ? booking.listing.title : 'Unavailable Listing' %>">
+            <img
+              src="<%= String(bookingListingImgUrl) %>"
+              alt="<%= booking.listing ? booking.listing.title : 'Listing Image' %>"
+              onerror="handleImageError(this, '/images/fallback.jpg');"
+              loading="lazy"
+              width="100%" height="200"
+            >
+            <div class="booking-body">
+              <h5><%= booking.listing ? booking.listing.title : 'Unavailable Listing' %></h5>
+              <p><i class="fas fa-user"></i> Guest: <%= booking.user ? booking.user.username : 'Unknown' %></p>
+              <p><i class="fas fa-calendar-alt"></i> 
+                <%= new Date(booking.startDate).toLocaleDateString() %> &rarr; <%= new Date(booking.endDate).toLocaleDateString() %>
+              </p>
+              <p><i class="fas fa-money-bill-wave"></i> Total: ₹<%= booking.total %></p>
+              <p><i class="fas fa-info-circle"></i> Status: <span class="fw-bold text-<%= booking.status && booking.status === 'confirmed' ? 'success' : (booking.status === 'pending' ? 'warning' : 'danger') %>"><%= booking.status ? (booking.status.charAt(0).toUpperCase() + booking.status.slice(1)) : 'Unknown Status' %></span></p>
+            </div>
+            <div class="booking-footer">
+              <% if (booking.listing && booking.listing._id) { %>
+                <a href="/listings/<%= booking.listing._id %>" class="btn btn-primary btn-sm" role="button">View Listing Details</a>
+              <% } else { %>
+                <button class="btn btn-secondary btn-sm" disabled aria-disabled="true">Listing Unavailable</button>
+              <% } %>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+
+      <% if (pagination.totalPages > 1) { %>
+        <nav aria-label="Bookings page navigation" class="pagination">
+          <ul class="pagination">
+            <li class="page-item <%= pagination.hasPrev ? '' : 'disabled' %>">
+              <a class="page-link" href="/dashboard/host?page=<%= pagination.currentPage - 1 %>" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            <% for (let i = 1; i <= pagination.totalPages; i++) { %>
+              <li class="page-item <%= pagination.currentPage === i ? 'active' : '' %>">
+                <a class="page-link" href="/dashboard/host?page=<%= i %>"><%= i %></a>
+              </li>
+            <% } %>
+            <li class="page-item <%= pagination.hasNext ? '' : 'disabled' %>">
+              <a class="page-link" href="/dashboard/host?page=<%= pagination.currentPage + 1 %>" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      <% } %>
+    <% } %>
+  </main>
+</div>
+
+<script>
+  // Function to handle image errors
+  function handleImageError(imgElement, fallbackSrc) {
+    imgElement.onerror = null; // Prevent infinite loop if fallback also fails
+    imgElement.src = fallbackSrc;
+  }
+
+  // Theme toggle (if applicable, ensure this is handled globally or here)
+  document.addEventListener('DOMContentLoaded', () => {
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+      });
+    }
+
+    // Apply saved theme or default to light on load
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } else {
+      // Default to light if no theme is saved
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  });
+</script>

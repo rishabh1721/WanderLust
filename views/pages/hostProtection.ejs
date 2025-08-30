@@ -1,0 +1,123 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container my-5 fade-in">
+  <div class="text-center mb-5">
+    <h1 class="display-5 fw-bold text-skyblue">Host Protection</h1>
+    <p class="lead text-muted">Feel confident welcoming guests—our protection programs have your back.</p>
+  </div>
+
+  <section class="row g-4">
+    <% const protections = [
+      {
+        title: "AirCover for Hosts",
+        desc: "All hosts are covered with AirCover—free top-to-bottom protection including damage coverage and liability insurance.",
+        icon: "fa-shield-alt",
+        color: "bg-success"
+      },
+      {
+        title: "Damage Protection",
+        desc: "We provide coverage for damages to your home or belongings caused by guests, up to $1 million USD.",
+        icon: "fa-house-damage",
+        color: "bg-primary"
+      },
+      {
+        title: "Liability Insurance",
+        desc: "Get $1 million in liability insurance for cases like guest injury or property damage claims.",
+        icon: "fa-gavel",
+        color: "bg-danger"
+      },
+      {
+        title: "Deep Cleaning Compensation",
+        desc: "We’ll reimburse you for unexpected messes that require extra cleaning.",
+        icon: "fa-soap",
+        color: "bg-warning text-dark"
+      },
+      {
+        title: "24/7 Safety Support",
+        desc: "We offer a dedicated safety line for hosts, available around the clock in emergency situations.",
+        icon: "fa-headset",
+        color: "bg-info text-dark"
+      },
+      {
+        title: "Identity Verification",
+        desc: "All guests go through identity checks to help ensure you're welcoming real, verified people.",
+        icon: "fa-id-badge",
+        color: "bg-dark"
+      }
+    ]; %>
+
+    <% protections.forEach(p => { %>
+      <div class="col-md-6 col-lg-4">
+        <div class="card p-4 text-center shadow-sm hover-rise">
+          <div class="mb-3">
+            <div class="icon-circle <%= p.color %> text-white d-inline-flex align-items-center justify-content-center">
+              <i class="fas <%= p.icon %> fa-2x"></i>
+            </div>
+          </div>
+          <h5 class="fw-bold text-red"><%= p.title %></h5>
+          <p class="text-yellow"><%= p.desc %></p>
+          <a href="#" class="btn btn-outline-secondary btn-sm">Learn More</a>
+        </div>
+      </div>
+    <% }) %>
+  </section>
+
+  <div class="text-center mt-5">
+    <h4 class="fw-bold text-red">Safety First, Always</h4>
+    <p class="text-muted">Your peace of mind matters. Wanderlust ensures you're never hosting alone.</p>
+    <a href="/help" class="btn btn-primary px-4 py-2">Visit Help Center</a>
+  </div>
+</div>
+
+<style>
+  .fade-in {
+    animation: fadeInUp 0.8s ease-out;
+  }
+
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .hover-rise {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 1rem;
+  }
+
+  .hover-rise:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .icon-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+  }
+
+  .text-red {
+    color: #e53e3e !important; /* Red color for titles */
+  }
+
+  .text-yellow {
+    color: #ffcc00 !important; /* Yellow color for descriptions */
+  }
+
+  /* Dark Mode styles */
+  body.dark-mode .card {
+    background-color: #000;
+  }
+
+  body.dark-mode .card-title,
+  body.dark-mode .card-text,
+  body.dark-mode .lead,
+  body.dark-mode .fst-italic {
+    color: var(--text-light) !important;
+  }
+</style>

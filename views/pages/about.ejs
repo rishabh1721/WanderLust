@@ -1,0 +1,84 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container my-5">
+  <div class="text-center mb-5">
+    <h1 class="display-4 fw-bold animate__animated animate__fadeInDown text-primary">About Wanderlust</h1>
+    <p class="lead animate__animated animate__fadeInUp text-light-emphasis">Discover the world through comfort, culture, and community.</p>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-6">
+      <div class="card shadow-lg border-0 h-100 about-card hover-scale animate__animated animate__fadeInLeft">
+        <div class="card-body">
+          <h3 class="card-title text-red">Our Mission</h3>
+          <p class="card-text text-yellow">
+            At Wanderlust, our mission is to empower travelers and hosts to connect authentically. We aim to create a world where every stay feels like home and every journey inspires a story worth sharing.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card shadow-lg border-0 h-100 about-card hover-scale animate__animated animate__fadeInRight">
+        <div class="card-body">
+          <h3 class="card-title text-red">How We Began</h3>
+          <p class="card-text text-yellow">
+            It all started with a backpack and a dream. Our founders traveled across continents and realized the need for a platform that brings people together through hospitality, safety, and unforgettable experiences.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center mt-5">
+    <p class="mt-3 fst-italic text-light-emphasis">"Not all those who wander are lost." — J.R.R. Tolkien</p>
+  </div>
+</div>
+
+<style>
+  :root {
+    --light-bg: linear-gradient(to right, #fdfbfb, #ebedee);
+    --dark-bg: linear-gradient(to right, #1f1f1f, #2b2b2b);
+    --text-light: #f1f1f1;
+    --text-muted: #cccccc;
+    --red-color: #ff4c4c;
+    --yellow-color: #ffcc00;
+  }
+
+  .hover-scale {
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+  }
+
+  .hover-scale:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .about-card {
+    background: var(--light-bg);
+    border-radius: 1rem;
+  }
+
+  body.dark-mode .about-card {
+    background: var(--dark-bg);
+  }
+
+  body.dark-mode .card-title,
+  body.dark-mode .card-text,
+  body.dark-mode .lead,
+  body.dark-mode .fst-italic {
+    color: var(--text-light) !important;
+  }
+
+  .card-title.text-red {
+    color: var(--red-color);
+  }
+
+  .card-text.text-yellow {
+    color: var(--yellow-color);
+  }
+
+  /* Override any other necessary styles */
+</style>
+
+<!-- Include Animate.css for entrance animations -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />

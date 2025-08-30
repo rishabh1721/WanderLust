@@ -1,0 +1,209 @@
+<%- layout('layouts/boilerplate') %>
+
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  .booking-container {
+    max-width: 800px;
+    margin: 4rem auto;
+    background: var(--card-bg);
+    border-radius: 2rem;
+    box-shadow: 0 20px 60px var(--shadow-color);
+    padding: 3rem;
+    animation: fadeInUp 0.7s ease;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    background: linear-gradient(to right, #ff4d4d, #ff1a1a);
+    -webkit-background-clip: text;
+    color: transparent;
+    font-weight: 800;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+    transition: color 0.3s ease;
+  }
+
+  input,
+  select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-color, #ccc);
+    background: var(--input-bg, #fff);
+    color: var(--input-text-color, #000);
+    transition: border 0.3s ease, background 0.3s ease, color 0.3s ease;
+  }
+
+  input:focus,
+  select:focus {
+    outline: none;
+    border-color: #ff4d4d;
+  }
+
+  button {
+    background: linear-gradient(to right, #ff4d4d, #ff1a1a);
+    color: white;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 1.2rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 5px 15px rgba(255, 77, 77, 0.4);
+  }
+
+  button:hover {
+    transform: scale(1.06);
+    box-shadow: 0 8px 25px rgba(255, 26, 26, 0.5);
+  }
+
+  #priceDisplay {
+    font-weight: bold;
+    background: var(--input-bg);
+    color: var(--input-text-color, #000);
+    padding: 1rem;
+    font-size: 1.2rem;
+    text-align: center;
+  }
+
+  .error-message {
+    color: red;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  @media screen and (max-width: 600px) {
+    .booking-container {
+      padding: 2rem;
+    }
+  }
+</style>
+
+
+<% if (!currentUser) { %>
+  <script>window.location.href = "/login";</script>
+<% } %>
+
+<div class="booking-container">
+  <h1>Book Your Stay at <%= listing.title %></h1>
+
+  <!-- Error Message for Invalid Input -->
+  <div id="errorMessage" class="error-message"></div>
+
+  <form id="bookingForm" action="/listings/<%= listing._id %>/book/create-payment-request" method="POST">
+    <!-- Hidden listing ID -->
+    <input type="hidden" name="listingId" value="<%= listing._id %>">
+
+    <!-- Check-in Date -->
+    <label for="checkIn">Check-in Date:</label>
+    <input type="date" name="checkIn" required />
+
+    <!-- Check-out Date -->
+    <label for="checkOut">Check-out Date:</label>
+    <input type="date" name="checkOut" required />
+
+    <!-- Number of Guests -->
+    <label for="guests">Number of Guests:</label>
+    <input type="number" name="guests" min="1" required />
+
+    <!-- Room Type -->
+    <label for="roomType">Room Type:</label>
+    <select name="roomType" required>
+      <option value="" disabled selected>Select room type</option>
+      <option value="standard">Standard</option>
+      <option value="deluxe">Deluxe</option>
+      <option value="suite">Suite</option>
+    </select>
+
+    <!-- Breakfast Option -->
+    <label for="breakfast">Breakfast Included?</label>
+    <select name="breakfast">
+      <option value="yes">Yes (+₹500)</option>
+      <option value="no">No</option>
+    </select>
+
+    <!-- Total Price Display -->
+    <label>Total Price:</label>
+    <input type="text" id="priceDisplay" readonly />
+
+    <!-- Confirm Booking Button -->
+    <button type="submit" id="confirmButton">Confirm Booking</button>
+  </form>
+</div>
+
+<script>
+  const form = document.getElementById('bookingForm');
+  const priceDisplay = document.getElementById('priceDisplay');
+  const errorMessage = document.getElementById('errorMessage');
+  const pricePerNight = <%= listing.price %>;
+
+  function calculatePrice() {
+    const checkIn = new Date(form['checkIn'].value);
+    const checkOut = new Date(form['checkOut'].value);
+    const guests = parseInt(form['guests'].value || '1');
+    const breakfast = form['breakfast'].value;
+
+    // Reset error message
+    errorMessage.innerHTML = '';
+
+    if (!checkIn || !checkOut || checkOut <= checkIn) {
+      errorMessage.innerHTML = 'Please enter valid dates. Check-out must be after check-in.';
+      priceDisplay.value = 'Invalid dates';
+      return;
+    }
+
+    if (guests < 1) {
+      errorMessage.innerHTML = 'Please select at least 1 guest.';
+      priceDisplay.value = 'Invalid guest number';
+      return;
+    }
+
+    const days = (checkOut - checkIn) / (1000 * 60 * 60 * 24);
+    let total = days * pricePerNight * guests;
+    if (breakfast === 'yes') total += 500 * guests;
+
+    priceDisplay.value = `₹${total}`;
+  }
+
+  form.addEventListener('submit', function (event) {
+    const checkIn = form['checkIn'].value;
+    const checkOut = form['checkOut'].value;
+    const guests = form['guests'].value;
+
+    if (!checkIn || !checkOut || !guests) {
+      errorMessage.innerHTML = 'Please fill out all required fields.';
+      event.preventDefault();
+    }
+  });
+
+  form['checkIn'].addEventListener('change', calculatePrice);
+  form['checkOut'].addEventListener('change', calculatePrice);
+  form['breakfast'].addEventListener('change', calculatePrice);
+  form['guests'].addEventListener('input', calculatePrice);
+
+  calculatePrice();
+</script>

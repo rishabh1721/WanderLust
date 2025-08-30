@@ -1,0 +1,557 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="container my-5" role="main" aria-label="Message Inbox" data-theme="<%= (currentUser && currentUser.prefersDark) ? 'dark' : 'light' %>">
+    <h1 class="section-heading">
+        <i class="fas fa-envelope"></i> My Inbox
+        <% if (totalUnread > 0) { %>
+            <span class="badge bg-danger ms-2" id="unread-message-count-badge" aria-label="<%= totalUnread %> unread messages"><%= totalUnread %></span>
+        <% } else { %>
+            <span class="badge bg-danger ms-2" id="unread-message-count-badge" style="display: none;" aria-label="0 unread messages">0</span>
+        <% } %>
+    </h1>
+
+    <div class="inbox-controls mb-4">
+        <div class="filter-options">
+            <label for="filterSelect" class="form-label visually-hidden">Filter Conversations:</label>
+            <select id="filterSelect" class="form-select" aria-label="Filter conversations by type">
+                <option value="all" <%= filters.filter === 'all' ? 'selected' : '' %>>All Conversations</option>
+                <option value="direct" <%= filters.filter === 'direct' ? 'selected' : '' %>>Direct Messages</option>
+                <option value="listing" <%= filters.filter === 'listing' ? 'selected' : '' %>>Listing Inquiries</option>
+                <option value="booking" <%= filters.filter === 'booking' ? 'selected' : '' %>>Booking Related</option>
+                <option value="system" <%= filters.filter === 'system' ? 'selected' : '' %>>System Messages</option>
+            </select>
+
+            <label for="archiveToggle" class="form-check-label ms-3">
+                <input type="checkbox" id="archiveToggle" class="form-check-input" <%= filters.archived === 'true' ? 'checked' : '' %> aria-label="Toggle archived conversations">
+                Show Archived
+            </label>
+        </div>
+        <div class="search-bar">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search by user name..." value="<%= filters.search || '' %>" aria-label="Search conversations by user name">
+            <button id="searchBtn" class="btn btn-primary" aria-label="Search">Search</button>
+        </div>
+    </div>
+
+    <% if (!conversations || conversations.length === 0) { %>
+        <div class="text-center text-muted fst-italic py-5 empty-inbox-message">
+            <p>You have no conversations yet.</p>
+            <p>Start by messaging a host about a listing or responding to a booking inquiry!</p>
+        </div>
+    <% } else { %>
+        <div class="conversation-list" id="inbox-list">
+            <% conversations.forEach(convo => { %>
+                <a href="/messages/conversation/<%= convo._id %>"
+                   class="conversation-item <%= convo.unreadCount > 0 ? 'unread' : '' %> <%= convo.isArchived ? 'archived-item' : '' %>"
+                   aria-label="Conversation with <%= convo.otherUser.username %>"
+                   data-conversation-id="<%= convo._id %>"
+                   data-last-message-id="<%= convo.lastMessage ? convo.lastMessage._id : '' %>"
+                >
+                    <div class="conversation-header">
+                        <img
+                            src="<%= convo.otherUser.avatar && convo.otherUser.avatar.trim() !== '' ? convo.otherUser.avatar : '/images/default-avatar.png' %>"
+                            alt="<%= convo.otherUser.username %>'s Avatar"
+                            class="avatar-small rounded-circle"
+                            loading="lazy"
+                            onerror="this.onerror=null; this.src='/images/default-avatar.png';"
+                        >
+                        <h2 class="conversation-title">
+                            <%= convo.otherUser.username %>
+                            <% if (convo.unreadCount > 0) { %>
+                                <span class="badge bg-danger ms-2" aria-label="<%= convo.unreadCount %> unread messages"><%= convo.unreadCount %></span>
+                            <% } %>
+                        </h2>
+                        <span class="conversation-time ms-auto"><%= convo.lastMessage ? convo.lastMessage.timeAgo : '' %></span>
+                    </div>
+                    <p class="last-message-preview">
+                        <% if (convo.lastMessage) { %>
+                            <span class="sender-prefix">
+                                <%= convo.lastMessage.isFromCurrentUser ? 'You: ' : convo.lastMessage.sender.username + ': ' %>
+                            </span>
+                            <%= convo.lastMessage.content ? (convo.lastMessage.content.length > 70 ? convo.lastMessage.content.substring(0, 70) + '...' : convo.lastMessage.content) : '[Attachment]' %>
+                        <% } else { %>
+                            <em>No messages yet.</em>
+                        <% } %>
+                    </p>
+                    <% if (convo.listingInfo || convo.bookingInfo) { %>
+                        <div class="conversation-context-summary">
+                            <% if (convo.listingInfo) { %>
+                                <span><i class="fas fa-home me-1"></i> About: <%= convo.listingInfo.title %></span>
+                            <% } %>
+                            <% if (convo.bookingInfo) { %>
+                                <span><i class="fas fa-calendar-alt me-1"></i> Booking: <%= new Date(convo.bookingInfo.startDate).toLocaleDateString() %> - <%= new Date(convo.bookingInfo.endDate).toLocaleDateString() %></span>
+                                <span class="booking-status <%= convo.bookingInfo.status %>"><%= convo.bookingInfo.status %></span>
+                            <% } %>
+                        </div>
+                    <% } %>
+                    <div class="conversation-actions">
+                        <% if (convo.isArchived) { %>
+                            <button type="button" class="btn btn-sm btn-outline-info unarchive-btn" data-convo-id="<%= convo._id %>" aria-label="Unarchive this conversation">Unarchive</button>
+                        <% } else { %>
+                            <button type="button" class="btn btn-sm btn-outline-secondary archive-btn" data-convo-id="<%= convo._id %>" aria-label="Archive this conversation">Archive</button>
+                        <% } %>
+                    </div>
+                </a>
+            <% }) %>
+        </div>
+
+        <% if (totalPages > 1) { %>
+            <nav aria-label="Page navigation" class="pagination-nav">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                        <a class="page-link" href="#" data-page="<%= currentPage - 1 %>" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                            <a class="page-link" href="#" data-page="<%= i %>"><%= i %></a>
+                        </li>
+                    <% } %>
+                    <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                        <a class="page-link" href="#" data-page="<%= currentPage + 1 %>" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        <% } %>
+    <% } %>
+</div>
+
+<div id="customMessageBox" class="custom-message-box" role="alert" aria-live="assertive" aria-atomic="true" style="display: none;">
+    <div class="message-box-content">
+        <p id="messageBoxText"></p>
+        <button id="messageBoxCloseBtn" class="message-box-close-btn" aria-label="Close message">
+            &times;
+        </button>
+    </div>
+</div>
+
+<script>
+    // Make current user ID available globally for client-side scripts
+    const CURRENT_USER_ID = "<%= currentUser && currentUser._id ? currentUser._id.toString() : '' %>";
+
+    // Global function for image error handling (re-used across EJS files)
+    function handleImageError(imgElement, fallbackSrc) {
+        imgElement.onerror = null;
+        imgElement.src = fallbackSrc;
+    }
+
+    // The formatTimeAgo helper is now only needed client-side in inbox.js if timeago.js fails to load.
+    // It's no longer used for server-side rendering in the EJS template directly.
+</script>
+
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.2/timeago.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/inbox.js"></script>
+
+<style>
+    /* Base variables for consistent theming */
+    :root {
+        --primary: #FF5A5F; /* Airbnb red */
+        --primary-dark: #E04449;
+        --gray-light: #f8f9fa; /* Lightest gray for backgrounds */
+        --gray-medium: #e9ecef; /* Medium gray for borders, inactive elements */
+        --gray-dark: #6c757d; /* Darker gray for text, icons */
+        --text-color: #212529; /* Main text color */
+        --border-color: #ced4da; /* Default border color */
+        --shadow-color: rgba(0, 0, 0, 0.1);
+        --primary-rgb: 255, 90, 95; /* RGB for primary color for rgba() */
+        --input-bg: #fff;
+        --input-text: #212529;
+        --input-placeholder: #6c757d;
+        --card-bg: #fff; /* Default card background */
+        --bg-color: #f0f2f5; /* Default body background */
+    }
+
+    /* Dark mode variables */
+    [data-theme="dark"] {
+        --primary: #FF5A5F;
+        --primary-dark: #E04449;
+        --gray-light: #2d3748; /* Darker background for chat box */
+        --gray-medium: #4a5568; /* Darker border/separator */
+        --gray-dark: #a0aec0; /* Lighter gray for muted text */
+        --text-color: #e2e8f0; /* Light text for main content */
+        --border-color: #4a5568; /* Darker border for inputs */
+        --shadow-color: rgba(0, 0, 0, 0.4);
+        --input-bg: #2d3748; /* Darker background for input */
+        --input-text: #e2e8f0; /* Light text for input */
+        --input-placeholder: #a0aec0; /* Lighter placeholder */
+        --card-bg: #1f1f2e; /* Dark mode card background */
+        --bg-color: #121212; /* Dark mode body background */
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 3rem auto;
+        padding: 1.5rem;
+        background: var(--card-bg);
+        border-radius: 12px;
+        box-shadow: 0 4px 20px var(--shadow-color);
+    }
+
+    .section-heading {
+        text-align: center;
+        font-size: 2.2rem;
+        margin-bottom: 2rem;
+        color: var(--primary);
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+
+    .inbox-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.5rem; /* Increased gap */
+        margin-bottom: 1.5rem;
+    }
+
+    .filter-options {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .form-select, .form-control {
+        border-radius: 8px;
+        border-color: var(--border-color);
+        background-color: var(--input-bg);
+        color: var(--input-text);
+        padding: 0.5rem 1rem; /* Adjust padding for better look */
+    }
+    .form-select:focus, .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.25rem rgba(var(--primary-rgb), 0.25);
+        background-color: var(--input-bg); /* Keep background consistent on focus */
+        color: var(--input-text); /* Keep text color consistent on focus */
+    }
+    .form-control::placeholder {
+        color: var(--input-placeholder);
+    }
+
+    .search-bar {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn-primary {
+        background-color: var(--primary);
+        border-color: var(--primary);
+        color: white;
+        border-radius: 8px;
+        transition: background-color 0.2s, border-color 0.2s;
+        padding: 0.5rem 1rem; /* Adjust padding for better look */
+    }
+    .btn-primary:hover {
+        background-color: var(--primary-dark);
+        border-color: var(--primary-dark);
+    }
+    .btn-outline-info { /* For Unarchive button */
+        color: #17a2b8;
+        border-color: #17a2b8;
+        background-color: transparent;
+        transition: all 0.2s ease;
+    }
+    .btn-outline-info:hover {
+        color: white;
+        background-color: #17a2b8;
+    }
+    .btn-outline-secondary { /* For Archive button */
+        color: #6c757d;
+        border-color: #6c757d;
+        background-color: transparent;
+        transition: all 0.2s ease;
+    }
+    .btn-outline-secondary:hover {
+        color: white;
+        background-color: #6c757d;
+    }
+
+
+    .conversation-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem; /* Increased gap */
+    }
+
+    .conversation-item {
+        display: flex;
+        flex-direction: column;
+        padding: 1rem;
+        background: var(--gray-light);
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        text-decoration: none;
+        color: var(--text-color);
+        transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+        position: relative; /* For actions button positioning */
+    }
+    .conversation-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        background-color: var(--gray-medium);
+    }
+    .conversation-item.unread {
+        border-left: 5px solid var(--primary);
+        padding-left: calc(1rem - 5px);
+        background-color: rgba(var(--primary-rgb), 0.05); /* Subtle highlight for unread */
+    }
+    .conversation-item.archived-item {
+        opacity: 0.7; /* Visually indicate archived */
+        border-left: 5px solid var(--gray-dark);
+        padding-left: calc(1rem - 5px);
+    }
+    /* Dark mode adjustments for conversation items */
+    [data-theme="dark"] .conversation-item {
+        background: var(--gray-light); /* Darker gray-light for cards */
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    [data-theme="dark"] .conversation-item:hover {
+        background-color: var(--gray-medium);
+    }
+    [data-theme="dark"] .conversation-item.unread {
+        background-color: rgba(var(--primary-rgb), 0.1);
+    }
+
+    .conversation-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem; /* Increased margin */
+    }
+
+    .avatar-small {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--primary);
+    }
+
+    .conversation-title {
+        font-size: 1.15rem;
+        font-weight: 600;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        flex-grow: 1; /* Allow title to take available space */
+    }
+
+    .conversation-time {
+        font-size: 0.8rem;
+        color: var(--gray-dark);
+        flex-shrink: 0; /* Prevent time from shrinking */
+    }
+
+    .last-message-preview {
+        font-size: 0.9rem;
+        color: var(--gray-dark);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 0.75rem; /* Increased margin */
+    }
+
+    .sender-prefix {
+        font-weight: 500;
+        color: var(--text-color);
+    }
+
+    .conversation-context-summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        font-size: 0.85rem;
+        color: var(--gray-dark);
+        margin-top: 0.75rem; /* Increased margin */
+        padding-top: 0.75rem; /* Increased padding */
+        border-top: 1px dashed var(--border-color);
+    }
+    .conversation-context-summary span {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+    .conversation-context-summary i {
+        color: var(--primary);
+    }
+
+    /* Booking Status specific colors (from chat.ejs) */
+    .booking-status {
+        font-weight: 700;
+        padding: 0.2rem 0.5rem;
+        border-radius: 6px;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        margin-left: 0.5rem; /* Spacing from context text */
+    }
+    .booking-status.pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+    .booking-status.confirmed {
+        background: #d4edda;
+        color: #155724;
+    }
+    .booking-status.cancelled {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    .booking-status.unknown { /* Added for consistency */
+        background: #e2e6ea;
+        color: #495057;
+    }
+
+    .conversation-actions {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        display: flex;
+        gap: 0.5rem;
+    }
+    .conversation-actions .btn {
+        padding: 0.3rem 0.7rem;
+        font-size: 0.75rem;
+        border-radius: 6px;
+    }
+
+    /* Pagination */
+    .pagination-nav {
+        margin-top: 2rem;
+    }
+    .pagination .page-link {
+        border-radius: 8px;
+        margin: 0 0.25rem;
+        color: var(--text-color);
+        background-color: var(--input-bg);
+        border-color: var(--border-color);
+        transition: all 0.2s ease;
+    }
+    .pagination .page-item.active .page-link {
+        background-color: var(--primary);
+        border-color: var(--primary);
+        color: white;
+    }
+    .pagination .page-link:hover:not(.disabled) {
+        background-color: var(--primary-dark);
+        border-color: var(--primary-dark);
+        color: white;
+    }
+    .pagination .page-item.disabled .page-link {
+        color: var(--gray-dark);
+        pointer-events: none;
+        opacity: 0.6;
+    }
+
+    /* Custom Message Box (Alerts) - copied from chat.ejs */
+    .custom-message-box {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: var(--card-bg, #fff);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        box-shadow: 0 4px 12px var(--shadow-color);
+        padding: 15px 20px;
+        z-index: 1000;
+        max-width: 400px;
+        text-align: center;
+        animation: fadeIn 0.3s ease-out;
+    }
+    .custom-message-box.success { border-color: #28a745; background-color: #d4edda; color: #155724; }
+    .custom-message-box.error { border-color: #dc3545; background-color: #f8d7da; color: #721c24; }
+    .custom-message-box.info { border-color: #007bff; background-color: #cfe2ff; color: #084298; }
+
+    /* Dark mode specific for message box */
+    [data-theme="dark"] .custom-message-box.success { background-color: #1a472a; color: #d4edda; border-color: #28a745; }
+    [data-theme="dark"] .custom-message-box.error { background-color: #58151c; color: #f8d7da; border-color: #dc3545; }
+    [data-theme="dark"] .custom-message-box.info { background-color: #0d366b; color: #cfe2ff; border-color: #007bff; }
+
+    .message-box-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+    }
+
+    .message-box-content p {
+        margin: 0;
+        font-size: 0.95rem;
+        color: var(--text-color);
+        flex-grow: 1;
+    }
+
+    .message-box-close-btn {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: var(--gray-dark);
+        cursor: pointer;
+        line-height: 1;
+        padding: 0;
+        transition: color 0.2s ease;
+    }
+
+    .message-box-close-btn:hover {
+        color: var(--text-color);
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+        to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .container {
+            margin: 1rem auto;
+            padding: 1rem;
+        }
+        .section-heading {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+        .inbox-controls {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .filter-options {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        .search-bar {
+            width: 100%;
+        }
+        .conversation-item {
+            padding: 0.75rem;
+        }
+        .conversation-header {
+            flex-wrap: wrap;
+        }
+        .conversation-time {
+            width: 100%;
+            text-align: right;
+            margin-top: 0.25rem;
+        }
+        .conversation-actions {
+            position: static;
+            margin-top: 0.75rem;
+            justify-content: flex-end;
+        }
+    }
+</style>

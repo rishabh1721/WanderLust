@@ -1,0 +1,130 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container my-5 help-center-page fade-in">
+  <div class="text-center mb-5">
+    <h1 class="display-4 fw-bold text-primary">Help Center</h1>
+    <p class="lead text-light-emphasis">We’re here to support you every step of the way.</p>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="card shadow-lg p-3 h-100 hover-lift transition-card">
+        <div class="card-body">
+          <h5 class="card-title"><i class="fa-solid fa-house-circle-check me-2 text-danger"></i>Booking Issues</h5>
+          <p class="card-text text-light-emphasis">
+            Need help with a recent reservation? Learn how to cancel, modify, or troubleshoot booking problems.
+            We’ll guide you through common issues and how to solve them quickly.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card shadow-lg p-3 h-100 hover-lift transition-card">
+        <div class="card-body">
+          <h5 class="card-title"><i class="fa-solid fa-user-shield me-2 text-danger"></i>Account & Safety</h5>
+          <p class="card-text text-light-emphasis">
+            Protecting your account is our priority. Learn how to update your profile, manage security settings,
+            enable 2FA, and report suspicious activity with ease.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card shadow-lg p-3 h-100 hover-lift transition-card">
+        <div class="card-body">
+          <h5 class="card-title"><i class="fa-solid fa-handshake-angle me-2 text-danger"></i>Hosting Support</h5>
+          <p class="card-text text-light-emphasis">
+            Are you a host? Explore tips, policies, and solutions related to your listings, guest interactions,
+            payouts, and hosting responsibilities.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Additional Content -->
+  <div class="text-center mt-5">
+    <a href="/browse" class="btn btn-dark px-4 py-2 transition-scale">Start Browsing</a>
+  </div>
+</div>
+
+<style>
+  :root {
+    --light-card-bg: #ffffff;
+    --dark-card-bg: #1e1e1e;
+    --text-light: #f1f1f1;
+    --text-muted: #bcbcbc;
+    --card-title-color: #e74c3c; /* Red color for titles */
+  }
+
+  .help-center-page .card {
+    border-radius: 1rem;
+    background-color: var(--light-card-bg);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  }
+
+  body.dark-mode .help-center-page .card {
+    background-color: var(--dark-card-bg);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  .fade-in {
+    animation: fadeInUp 0.9s ease forwards;
+  }
+
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .transition-card {
+    transition: all 0.3s ease-in-out;
+  }
+
+  .transition-scale {
+    transition: transform 0.2s ease;
+  }
+
+  .transition-scale:hover {
+    transform: scale(1.05);
+  }
+
+  .card-title {
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: var(--card-title-color); /* Apply red color here */
+  }
+
+  body.dark-mode .card-title {
+    color: var(--card-title-color); /* Keep red color for dark mode as well */
+  }
+
+  body.dark-mode .card-text,
+  body.dark-mode .lead,
+  body.dark-mode .text-light-emphasis,
+  body.dark-mode .alert-success {
+    color: var(--text-muted) !important;
+  }
+
+  .alert-success {
+    font-size: 0.95rem;
+    background-color: rgba(25, 135, 84, 0.1);
+    border: none;
+  }
+
+  body.dark-mode .alert-success {
+    background-color: rgba(25, 135, 84, 0.15);
+  }
+</style>

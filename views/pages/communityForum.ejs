@@ -1,0 +1,129 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container my-5 fade-in community-page">
+  <div class="text-center mb-5">
+    <h1 class="display-5 fw-bold text-primary">Wanderlust Community Forum</h1>
+    <p class="lead text-light-emphasis">Connect. Share. Learn. A space where hosts and travelers come together to grow.</p>
+  </div>
+
+  <!-- Welcome Message -->
+  <section class="mb-5">
+    <div class="row align-items-center">
+      <div class="col-md-6 mb-4 mb-md-0">
+        <img src="https://images.unsplash.com/photo-1595152772835-219674b2a8a6" class="img-fluid rounded shadow transition-scale" alt="Community Forum">
+      </div>
+      <div class="col-md-6">
+        <h3 class="fw-semibold text-light">Your Voice Matters</h3>
+        <p class="text-light-emphasis">Whether you're a seasoned host, a curious guest, or someone planning your next big adventure, the forum is where your stories, tips, and questions thrive. Join thousands of Wanderlusters sharing real-world insights and experiences.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Popular Discussions -->
+  <section>
+    <h3 class="mb-4 text-center text-light">Trending Topics</h3>
+    <div class="row g-4">
+      <!-- Hosting Tips -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card shadow-sm transition-card hover-lift">
+          <div class="card-body">
+            <h5 class="card-title text-primary">Hosting Tips & Tricks</h5>
+            <p class="card-text text-light-emphasis">Learn how top hosts elevate guest experiences and increase bookings.</p>
+            <a href="#" class="btn btn-sm btn-outline-primary transition-scale">Join Conversation</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Travel Hacks -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card shadow-sm transition-card hover-lift">
+          <div class="card-body">
+            <h5 class="card-title text-primary">Travel Hacks & Itineraries</h5>
+            <p class="card-text text-light-emphasis">Find hidden gems, curated journeys, and travel-saving secrets.</p>
+            <a href="#" class="btn btn-sm btn-outline-primary transition-scale">Explore Threads</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Support -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card shadow-sm transition-card hover-lift">
+          <div class="card-body">
+            <h5 class="card-title text-primary">Support & Feedback</h5>
+            <p class="card-text text-light-emphasis">Get help, report issues, or suggest improvements to the platform.</p>
+            <a href="#" class="btn btn-sm btn-outline-primary transition-scale">Post a Topic</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="text-center mt-5">
+    <h4 class="fw-bold text-light">Be part of something bigger.</h4>
+    <p class="text-light-emphasis">Start a discussion, share a story, or ask a question—our community awaits.</p>
+    <a href="/signup" class="btn btn-primary px-4 py-2 transition-scale">Join the Forum</a>
+  </section>
+</div>
+
+<style>
+  :root {
+    --card-bg-light: #ffffff;
+    --card-bg-dark: #1f1f1f;
+    --text-light: #f8f9fa;
+    --text-muted: #c0c0c0;
+  }
+
+  .community-page .card {
+    border-radius: 1rem;
+    background-color: var(--card-bg-light);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  }
+
+  body.dark-mode .community-page .card {
+    background-color: var(--card-bg-dark);
+  }
+
+  .fade-in {
+    animation: fadeInUp 0.9s ease-out;
+  }
+
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  .transition-card {
+    transition: all 0.3s ease-in-out;
+  }
+
+  .transition-scale {
+    transition: transform 0.2s ease;
+  }
+
+  .transition-scale:hover {
+    transform: scale(1.05);
+  }
+
+  .btn-outline-primary:hover {
+    background-color: #0d6efd;
+    color: #fff;
+  }
+
+  body.dark-mode .card-text,
+  body.dark-mode .lead,
+  body.dark-mode .text-light-emphasis {
+    color: var(--text-muted) !important;
+  }
+</style>

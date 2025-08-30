@@ -1,0 +1,89 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container py-5 fade-in">
+  <div class="text-center mb-5">
+    <h1 class="display-5 fw-bold text-red">Report a Concern</h1>
+    <p class="lead text-yellow">We take safety, trust, and integrity seriously. Use this page to report any issues or violations you’ve encountered.</p>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <form class="card shadow-lg p-4 bg-light report-form transition-fade">
+        <div class="mb-3">
+          <label for="name" class="form-label fw-semibold text-red">Your Name</label>
+          <input type="text" class="form-control" id="name" placeholder="Enter your full name" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="email" class="form-label fw-semibold text-red">Email Address</label>
+          <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="type" class="form-label fw-semibold text-red">Type of Concern</label>
+          <select class="form-select" id="type">
+            <option value="behavior">Inappropriate Behavior</option>
+            <option value="fraud">Fraud or Scam</option>
+            <option value="listing">Misleading Listing</option>
+            <option value="safety">Safety Issue</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="details" class="form-label fw-semibold text-red">Details</label>
+          <textarea class="form-control" id="details" rows="5" placeholder="Describe the issue in detail..." required></textarea>
+        </div>
+
+        <div class="text-center">
+          <button type="submit" class="btn btn-danger px-4">Submit Report</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+  .fade-in {
+    animation: fadeInSlide 1s ease;
+  }
+
+  @keyframes fadeInSlide {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .report-form {
+    border-radius: 15px;
+    background: #fff;
+    transition: all 0.3s ease;
+  }
+
+  .report-form:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+  }
+
+  .form-control, .form-select {
+    border-radius: 0.5rem;
+  }
+
+  textarea::placeholder {
+    font-style: italic;
+    color: #aaa;
+  }
+
+  .text-red {
+    color: #e53e3e !important; /* Red color for titles */
+  }
+
+  .text-yellow {
+    color: #ffcc00 !important; /* Yellow color for descriptions */
+  }
+</style>

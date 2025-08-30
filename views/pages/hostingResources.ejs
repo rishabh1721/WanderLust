@@ -1,0 +1,114 @@
+<% layout("layouts/boilerplate") %>
+
+<!-- Set the title directly -->
+<% var pageTitle = "Hosting Resources - Wanderlust"; %>
+
+<div class="container my-5 fade-in">
+  <div class="text-center mb-5">
+    <h1 class="display-5 fw-bold">Hosting Resources</h1>
+    <p class="lead text-muted">Everything you need to become a successful host—from getting started to mastering hospitality.</p>
+  </div>
+
+  <section class="row g-4">
+    <% const resources = [
+      {
+        title: "Hosting 101",
+        desc: "New to hosting? Learn the basics, from setting up your space to welcoming your first guest.",
+        icon: "fa-house-user",
+        color: "bg-primary"
+      },
+      {
+        title: "Listing Optimization",
+        desc: "Craft compelling descriptions, set competitive prices, and capture standout photos.",
+        icon: "fa-pen-nib",
+        color: "bg-success"
+      },
+      {
+        title: "Guest Communication",
+        desc: "Master the art of hospitality with tips for clear, timely, and friendly messaging.",
+        icon: "fa-comments",
+        color: "bg-warning text-dark"
+      },
+      {
+        title: "Cleaning & Safety",
+        desc: "Maintain a sparkling, safe, and guest-ready home with detailed checklists and hygiene practices.",
+        icon: "fa-broom",
+        color: "bg-danger"
+      },
+      {
+        title: "Earning & Payments",
+        desc: "Track your earnings, understand taxes, and explore payout options.",
+        icon: "fa-wallet",
+        color: "bg-info text-dark"
+      },
+      {
+        title: "Handling Reviews",
+        desc: "Respond to feedback, boost your rating, and build your reputation.",
+        icon: "fa-star-half-alt",
+        color: "bg-dark"
+      }
+    ]; %>
+
+    <% resources.forEach(r => { %>
+      <div class="col-md-6 col-lg-4">
+        <div class="card p-4 text-center shadow-sm hover-rise">
+          <div class="mb-3">
+            <div class="icon-circle <%= r.color %> text-white d-inline-flex align-items-center justify-content-center">
+              <i class="fas <%= r.icon %> fa-2x"></i>
+            </div>
+          </div>
+          <h5 class="fw-bold text-red"><%= r.title %></h5>
+          <p class="text-yellow"><%= r.desc %></p> <!-- Added text-yellow class -->
+          <a href="#" class="btn btn-outline-secondary btn-sm">Learn More</a>
+        </div>
+      </div>
+    <% }) %>
+  </section>
+
+  <div class="text-center mt-5">
+    <h4 class="fw-bold">Ready to host?</h4>
+    <p class="text-muted">Join a global community and turn your space into an experience.</p>
+    <a href="/host-your-place" class="btn btn-primary px-4 py-2">Become a Host</a>
+  </div>
+</div>
+
+<style>
+  .fade-in {
+    animation: fadeInUp 0.8s ease-out;
+  }
+
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .hover-rise {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 1rem;
+  }
+
+  .hover-rise:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .icon-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+  }
+
+  .text-red {
+    color: #e53e3e !important; /* Red color for titles */
+  }
+
+  .text-yellow {
+    color: #fbbf24 !important; /* Yellow color for paragraph text */
+  }
+</style>

@@ -1,0 +1,89 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container my-5 fade-in browse-page">
+  <div class="text-center mb-5">
+    <h1 class="display-5 fw-bold">Browse Our Stunning Stays</h1>
+    <p class="lead text-muted">Discover beautiful places to stay from cozy cabins to luxury villas across the globe.</p>
+  </div>
+
+  <div class="row g-4">
+    <!-- Stay Card 1 -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card stay-card shadow-sm hover-lift transition-card">
+        <img src="https://plus.unsplash.com/premium_photo-1688429241865-154f47a2ee78?q=80&w=3538&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="card-img-top" alt="Mountain Cabin">
+        <div class="card-body">
+          <h5 class="card-title text-danger">Rustic Mountain Cabin</h5>
+          <p class="card-text text-warning">Escape into nature with this cozy cabin surrounded by breathtaking alpine views.</p>
+          <span class="badge bg-primary">From $120/night</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stay Card 2 -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card stay-card shadow-sm hover-lift transition-card">
+        <img src="https://images.unsplash.com/photo-1729720281771-b790dfb6ec7f?q=80&w=3542&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="card-img-top" alt="Beach Villa">
+        <div class="card-body">
+          <h5 class="card-title text-danger">Luxury Beachfront Villa</h5>
+          <p class="card-text text-warning">Enjoy modern luxury with sea views, private pools, and direct beach access.</p>
+          <span class="badge bg-success">From $350/night</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stay Card 3 -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card stay-card shadow-sm hover-lift transition-card">
+        <img src="https://images.unsplash.com/photo-1513517147916-e77dd158b0a7?q=80&w=2912&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="card-img-top" alt="Treehouse">
+        <div class="card-body">
+          <h5 class="card-title text-danger">Eco Treehouse Retreat</h5>
+          <p class="card-text text-warning">Live among the treetops in this sustainable stay ideal for adventurers and dreamers.</p>
+          <span class="badge bg-warning text-dark">From $90/night</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center mt-5">
+    <a href="/listings" class="btn btn-outline-dark px-4 py-2">Explore All Listings</a>
+  </div>
+</div>
+
+<style>
+  .browse-page .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 1.5rem;
+    overflow: hidden;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 18px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .fade-in {
+    animation: fadeInUp 1s ease forwards;
+  }
+
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .card-title {
+    font-weight: 600;
+  }
+
+  .badge {
+    font-size: 0.85rem;
+    margin-top: 10px;
+    padding: 0.5em 0.75em;
+    border-radius: 999px;
+  }
+</style>

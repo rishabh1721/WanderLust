@@ -1,0 +1,394 @@
+<%- layout("layouts/boilerplate") %>
+
+<div class="container mt-5" data-theme="<%= theme %>">
+  <% if (success && success.length) { %>
+    <div class="alert alert-success mb-4"><%= success[0] %></div>
+  <% } %>
+  <% if (error && error.length) { %>
+    <div class="alert alert-danger mb-4"><%= error[0] %></div>
+  <% } %>
+
+  <!-- === SEARCH BAR === -->
+  <div class="search-bar mb-5">
+    <form action="/listings" method="GET" class="search-form d-flex flex-wrap gap-3 justify-content-center">
+      <input type="text" name="location" placeholder="Where to?" value="<%= search.location || '' %>" class="form-control" />
+      <input type="date" name="checkIn" value="<%= search.checkIn || '' %>" class="form-control" />
+      <input type="date" name="checkOut" value="<%= search.checkOut || '' %>" class="form-control" />
+      <input type="number" name="guests" min="1" placeholder="Guests" value="<%= search.guests || '' %>" class="form-control" />
+      <button type="submit" class="btn btn-accent">Search</button>
+    </form>
+  </div>
+
+  <!-- === SECTION HEADING === -->
+  <h2 class="section-heading">🌍 Explore All Listings</h2>
+
+ <!-- === LISTINGS GRID === -->
+<div id="listingsContainer" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4" style="display:none;">
+  <% listings.forEach(listing => { %>
+    <% 
+      const imgUrl = listing.image
+                        ? listing.image
+                        : (Array.isArray(listing.images) && listing.images.length)
+                          ? listing.images[0].url
+                          : '/images/fallback.jpg';
+    %>
+    <div class="col">
+      <div class="listing-card h-100">
+        <a href="/listings/<%= listing._id %>" class="text-decoration-none">
+          <img 
+            src="<%= imgUrl %>" 
+            class="listing-img" 
+            alt="<%= listing.title %>"
+            onerror="this.onerror=null;this.src='/images/fallback.jpg';" 
+            loading="lazy" 
+          >
+          <div class="listing-body">
+            <div class="listing-text">
+              <div class="listing-title"><%= listing.title %></div>
+              <div class="listing-location"><%= listing.location %></div>
+              <div class="listing-price">₹<%= listing.price %> / night</div>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  <% }) %>
+</div>
+
+<!-- === SHIMMER PLACEHOLDER === -->
+<div id="shimmerContainer" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+  <% for (let i = 0; i < 8; i++) { %>
+    <div class="col">
+      <div class="listing-card shimmer-card h-100">
+        <div class="shimmer-img"></div>
+        <div class="listing-body shimmer-body">
+          <div class="shimmer-text title"></div>
+          <div class="shimmer-text location"></div>
+          <div class="shimmer-text price"></div>
+        </div>
+      </div>
+    </div>
+  <% } %>
+</div>
+
+
+
+
+  <!-- === PAGINATION CONTROLS === -->
+  <% if (pagination && pagination.totalPages > 1) { %>
+    <nav aria-label="Page navigation" class="d-flex justify-content-center mt-5">
+      <ul class="pagination">
+        <% const searchParams = new URLSearchParams(search).toString(); %>
+
+        <li class="page-item <%= pagination.currentPage === 1 ? 'disabled' : '' %>">
+          <a class="page-link" href="?<%= searchParams %>&page=<%= pagination.currentPage - 1 %>">
+            &laquo; Prev
+          </a>
+        </li>
+
+        <% for (let i = 1; i <= pagination.totalPages; i++) { %>
+          <li class="page-item <%= i === pagination.currentPage ? 'active' : '' %>">
+            <a class="page-link" href="?<%= searchParams %>&page=<%= i %>">
+              <%= i %>
+            </a>
+          </li>
+        <% } %>
+
+        <li class="page-item <%= pagination.currentPage === pagination.totalPages ? 'disabled' : '' %>">
+          <a class="page-link" href="?<%= searchParams %>&page=<%= pagination.currentPage + 1 %>">
+            Next &raquo;
+          </a>
+        </li>
+
+      </ul>
+    </nav>
+  <% } %>
+
+  <!-- === MAP TOGGLE === -->
+  <div class="text-center mt-5">
+    <button id="toggleMapBtn" class="btn btn-accent">🗺️ Show Map</button>
+  </div>
+
+  <div id="mapContainer" style="display:none; margin-top:30px;">
+    <div id="map" style="height:400px;"></div>
+  </div>
+</div>
+
+<!-- === SCRIPTS === -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const toggleBtn = document.getElementById("toggleMapBtn");
+    const mapContainer = document.getElementById("mapContainer");
+    let mapInitialized = false;
+    let map;
+
+    const listingCoords = [
+      { lat: 28.7041, lng: 77.1025, title: "Delhi" },
+      { lat: 19.0760, lng: 72.8777, title: "Mumbai" },
+      { lat: 12.9716, lng: 77.5946, title: "Bangalore" }
+    ];
+
+    toggleBtn.addEventListener("click", () => {
+      if (!mapInitialized) {
+        mapContainer.style.display = "block";
+        toggleBtn.textContent = "❌ Hide Map";
+
+        map = L.map("map").setView([20.5937, 78.9629], 5);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        const bounds = [];
+        listingCoords.forEach(({ lat, lng, title }) => {
+          L.marker([lat, lng]).addTo(map).bindPopup(`<b>${title}</b>`);
+          bounds.push([lat, lng]);
+        });
+
+        if (bounds.length) map.fitBounds(bounds, { padding: [50, 50] });
+
+        mapInitialized = true;
+      } else {
+        const hidden = mapContainer.style.display === "none";
+        mapContainer.style.display = hidden ? "block" : "none";
+        toggleBtn.textContent = hidden ? "❌ Hide Map" : "🗺️ Show Map";
+      }
+    });
+  });
+
+  
+document.addEventListener("DOMContentLoaded", () => {
+  const shimmer = document.getElementById("shimmerContainer");
+  const listings = document.getElementById("listingsContainer");
+
+  setTimeout(() => {
+    shimmer.style.display = "none";
+    listings.style.display = "flex";
+  }, 1200); // fake loading 1.2 seconds for nice effect
+});
+
+
+</script>
+
+<!-- === CUSTOM STYLES === -->
+<style>
+  :root {
+    --text-color: #222;
+    --bg-color: #f7f7f7;
+    --card-bg: #fff;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --primary: #6C63FF;
+    --secondary: #FF6584;
+    --border-radius: 1.2rem;
+  }
+
+  [data-theme="dark"] {
+    --text-color: #eee;
+    --bg-color: #121212;
+    --card-bg: #1e1e1e;
+    --shadow-color: rgba(255, 255, 255, 0.05);
+  }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Poppins', sans-serif;
+    transition: background 0.5s, color 0.5s;
+  }
+
+  .section-heading {
+    font-size: 2.2rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2rem;
+    animation: fadeIn 0.8s ease-in-out;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    background-clip: text;
+    color: transparent;
+  }
+
+  .listing-card {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: 0 8px 20px var(--shadow-color);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .listing-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(108, 99, 255, 0.3);
+  }
+
+  .listing-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+  }
+
+  .listing-body {
+    padding: 15px;
+    flex-grow: 1;
+  }
+
+  .listing-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .listing-title {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: var(--text-color);
+  }
+
+  .listing-location {
+    font-size: 0.95rem;
+    color: gray;
+  }
+
+  .listing-price {
+    margin-top: 8px;
+    font-weight: bold;
+    font-size: 1.05rem;
+    color: var(--primary);
+  }
+
+  .btn-accent {
+    background: linear-gradient(135deg, var(--primary), #00c6ff);
+    color: #fff;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .btn-accent:hover {
+    opacity: 0.9;
+    transform: scale(1.03);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .pagination {
+    gap: 8px;
+  }
+
+  .pagination .page-item .page-link {
+    color: #0d6efd;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    transition: all 0.3s ease;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-weight: 500;
+  }
+
+  .pagination .page-item.active .page-link {
+    background-color: #0d6efd;
+    color: #fff;
+    border-color: #0d6efd;
+    font-weight: bold;
+  }
+
+  .pagination .page-item .page-link:hover {
+    background-color: #e2e6ea;
+    color: #0a58ca;
+    transform: scale(1.05);
+  }
+
+  .pagination .page-item.disabled .page-link {
+    pointer-events: none;
+    background-color: #f8f9fa;
+    color: #6c757d;
+    border-color: #dee2e6;
+  }
+
+  /* Shimmer Animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Shimmer Card Design */
+.shimmer-card {
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: 0 8px 20px var(--shadow-color);
+  animation: pulse 1.5s infinite alternate;
+}
+
+.shimmer-img {
+  width: 100%;
+  height: 220px;
+  border-top-left-radius: var(--border-radius);
+  border-top-right-radius: var(--border-radius);
+  background: linear-gradient(
+    110deg,
+    var(--card-bg) 8%,
+    #e0e0e0 18%,
+    var(--card-bg) 33%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Shimmer Text Blocks */
+.shimmer-body {
+  padding: 15px;
+}
+
+.shimmer-text {
+  height: 15px;
+  border-radius: 5px;
+  background: linear-gradient(
+    110deg,
+    var(--card-bg) 8%,
+    #e0e0e0 18%,
+    var(--card-bg) 33%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  margin-bottom: 10px;
+}
+
+.shimmer-text.title {
+  width: 70%;
+  height: 18px;
+}
+
+.shimmer-text.location {
+  width: 50%;
+  height: 14px;
+}
+
+.shimmer-text.price {
+  width: 40%;
+  height: 16px;
+  margin-top: 15px;
+}
+
+/* Fade-in Effect */
+.fade-in {
+  opacity: 0;
+  animation: fadeInSmooth 1s ease forwards;
+}
+
+@keyframes fadeInSmooth {
+  to {
+    opacity: 1;
+  }
+}
+
+</style>

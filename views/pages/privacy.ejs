@@ -1,0 +1,92 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container py-5 fade-in">
+  <div class="text-center mb-5">
+    <h1 class="display-5 fw-bold text-red">Privacy Policy</h1>
+    <p class="lead text-muted">Your privacy matters. Here's how we protect your data and keep your trust.</p>
+  </div>
+
+  <div class="accordion accordion-flush" id="privacyAccordion">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingOne">
+        <button class="accordion-button fw-semibold collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+          1. Information We Collect
+        </button>
+      </h2>
+      <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#privacyAccordion">
+        <div class="accordion-body text-yellow">
+          We collect data you provide when signing up, booking a stay, or listing your property. This includes your name, email, phone number, and preferences.
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingTwo">
+        <button class="accordion-button fw-semibold collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+          2. How We Use Your Data
+        </button>
+      </h2>
+      <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#privacyAccordion">
+        <div class="accordion-body text-yellow">
+          Your data helps us personalize your experience, connect you with hosts, and improve our services. We never sell your data to third parties.
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingThree">
+        <button class="accordion-button fw-semibold collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
+          3. Your Privacy Rights
+        </button>
+      </h2>
+      <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#privacyAccordion">
+        <div class="accordion-body text-yellow">
+          You can request access, modification, or deletion of your data at any time. We respect your choices and ensure full compliance with global privacy laws.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center mt-5">
+    <a href="/help" class="btn btn-outline-primary px-4">Need More Help?</a>
+  </div>
+</div>
+
+<style>
+  .fade-in {
+    animation: fadeInUp 1s ease-in-out;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .accordion-button:not(.collapsed) {
+    background-color: #f0f8ff;
+    color: #0d6efd;
+    font-weight: bold;
+  }
+
+  .accordion-item {
+    border: none;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+
+  .text-red {
+    color: #e53e3e !important; /* Red color for titles */
+  }
+
+  .text-yellow {
+    color: #ffcc00 !important; /* Yellow color for descriptions */
+  }
+</style>

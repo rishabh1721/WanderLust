@@ -1,0 +1,82 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container py-5 fade-in">
+  <div class="text-center mb-5">
+    <h1 class="display-5 fw-bold text-red">Responsible Hosting</h1>
+    <p class="lead text-yellow">A safe and respectful community starts with responsible hosts. Here’s how you can make a difference.</p>
+  </div>
+
+  <div class="row gy-4">
+    <div class="col-md-6">
+      <div class="card p-4 shadow-sm transition-hover border-0">
+        <h4 class="fw-semibold mb-2 text-red">Respect Local Laws</h4>
+        <p class="text-yellow">Always comply with your local regulations around short-term rentals. Being informed helps protect your guests and your business.</p>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card p-4 shadow-sm transition-hover border-0">
+        <h4 class="fw-semibold mb-2 text-red">Ensure Safety</h4>
+        <p class="text-yellow">Install smoke detectors, provide emergency contact info, and ensure your property is well-maintained and safe for everyone.</p>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card p-4 shadow-sm transition-hover border-0">
+        <h4 class="fw-semibold mb-2 text-red">Respect Your Guests</h4>
+        <p class="text-yellow">Create a welcoming space for all guests. Be available, responsive, and respectful of their privacy and cultural needs.</p>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card p-4 shadow-sm transition-hover border-0">
+        <h4 class="fw-semibold mb-2 text-red">Be Transparent</h4>
+        <p class="text-yellow">Describe your space accurately and set clear expectations. Misleading listings harm trust and reduce satisfaction.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center mt-5">
+    <a href="/resources" class="btn btn-outline-primary px-4">View Hosting Resources</a>
+  </div>
+</div>
+
+<style>
+  .fade-in {
+    animation: fadeInEase 1s ease;
+  }
+
+  @keyframes fadeInEase {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .transition-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 15px;
+    background-color: #fff;
+  }
+
+  .transition-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+  }
+
+  .card h4 {
+    color: #e53e3e; /* Red color for section titles */
+  }
+
+  .text-red {
+    color: #e53e3e !important; /* Red for titles */
+  }
+
+  .text-yellow {
+    color: #ffcc00 !important; /* Yellow for card paragraphs */
+  }
+</style>

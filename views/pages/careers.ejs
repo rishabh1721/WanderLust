@@ -1,0 +1,178 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container my-5 fade-in careers-page">
+  <div class="text-center mb-5">
+    <h1 class="display-4 fw-bold text-primary" style="color: skyblue;">Join the Wanderlust Team</h1>
+    <p class="lead text-light-emphasis" style="color: yellow;">Shape the future of travel with us. Discover a career where your passion meets purpose.</p>
+  </div>
+
+  <!-- Culture Section -->
+  <section class="mb-5">
+    <div class="row align-items-center">
+      <div class="col-md-6 mb-4 mb-md-0">
+        <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d" class="img-fluid rounded shadow transition-scale" alt="Our Team">
+      </div>
+      <div class="col-md-6">
+        <h3 class="fw-semibold text-light" style="color: red;">Work with Purpose</h3>
+        <p class="text-light-emphasis" style="color: yellow;">At Wanderlust, we believe travel empowers growth, connection, and inspiration. We’re building a platform where everyone feels at home—no matter where they go. Be part of a global mission that values inclusion, creativity, and collaboration.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Open Roles Section -->
+  <section>
+    <h3 class="mb-4 text-center text-light" style="color: red;">Current Openings</h3>
+    <div class="row g-4">
+      <!-- Frontend Developer -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card job-card shadow-sm hover-lift transition-card">
+          <div class="card-body">
+            <h5 class="card-title" style="color: red;">Frontend Developer</h5>
+            <p class="card-text" style="color: yellow;">Build elegant, intuitive interfaces that bring the Wanderlust experience to life.</p>
+            <a href="#" class="btn btn-outline-primary btn-sm transition-scale">Apply Now</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Manager -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card job-card shadow-sm hover-lift transition-card">
+          <div class="card-body">
+            <h5 class="card-title" style="color: red;">Product Manager</h5>
+            <p class="card-text" style="color: yellow;">Lead product innovation and bridge user needs with business strategy.</p>
+            <a href="#" class="btn btn-outline-primary btn-sm transition-scale">Apply Now</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- UX Designer -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card job-card shadow-sm hover-lift transition-card">
+          <div class="card-body">
+            <h5 class="card-title" style="color: red;">UX Designer</h5>
+            <p class="card-text" style="color: yellow;">Craft experiences that are seamless, accessible, and emotionally resonant.</p>
+            <a href="#" class="btn btn-outline-primary btn-sm transition-scale">Apply Now</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Life at Wanderlust -->
+  <section class="mt-5">
+    <h3 class="mb-3 text-center text-light" style="color: red;">Life at Wanderlust</h3>
+    <p class="text-light-emphasis text-center" style="color: yellow;">Remote-first. Mission-driven. People-first. Join a company that invests in its people.</p>
+    <div class="alert alert-success text-center">
+      🌍 Enjoy flexible work, global offsites, learning budgets, and a culture of kindness.
+    </div>
+  </section>
+
+  <div class="text-center mt-5">
+    <a href="/about" class="btn btn-primary px-4 py-2 transition-scale">Learn More About Us</a>
+  </div>
+</div>
+
+<style>
+  :root {
+    --light-card-bg: #ffffff;
+    --dark-card-bg: #000000; /* Set dark mode background to black */
+    --text-light: #f1f1f1;
+    --text-muted: #bcbcbc;
+  }
+
+  .careers-page .job-card {
+    border-radius: 1rem;
+    background-color: var(--light-card-bg); /* Default to white for light mode */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  }
+
+  body.dark-mode .careers-page .job-card {
+    background-color: var(--dark-card-bg); /* Black background for dark mode */
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  .fade-in {
+    animation: fadeInUp 0.9s ease forwards;
+  }
+
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .transition-card {
+    transition: all 0.3s ease-in-out;
+  }
+
+  .transition-scale {
+    transition: transform 0.2s ease;
+  }
+
+  .transition-scale:hover {
+    transform: scale(1.05);
+  }
+
+  .card-title {
+    font-weight: 600;
+    font-size: 1.25rem;
+  }
+
+  .alert-success {
+    font-size: 0.95rem;
+    background-color: rgba(25, 135, 84, 0.1);
+    border: none;
+  }
+
+  body.dark-mode .alert-success {
+    background-color: rgba(25, 135, 84, 0.15);
+  }
+
+  body.dark-mode .card-text,
+  body.dark-mode .lead,
+  body.dark-mode .text-light-emphasis,
+  body.dark-mode .alert-success {
+    color: var(--text-muted) !important;
+  }
+
+  /* Custom color overrides for card titles and paragraphs */
+  .card-title {
+    color: red !important;
+  }
+
+  .card-text {
+    color: yellow !important;
+  }
+
+  /* Red and yellow color scheme for the rest of the page */
+  body {
+    color: red; /* Default text color */
+  }
+
+  h3, p, .alert-success {
+    color: yellow !important;
+  }
+
+  /* For dark mode specific changes */
+  body.dark-mode .card-title {
+    color: red !important;
+  }
+
+  body.dark-mode .card-text {
+    color: yellow !important;
+  }
+
+  /* Ensure card background is black in dark mode */
+  body.dark-mode .job-card {
+    background-color: var(--dark-card-bg) !important; /* Force dark background for cards */
+  }
+</style>

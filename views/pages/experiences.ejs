@@ -1,0 +1,117 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container my-5 experience-page fade-in">
+  <div class="text-center mb-5">
+    <h1 class="display-5 fw-bold text-primary">Wanderlust Experiences</h1>
+    <p class="lead text-light-emphasis">Immerse yourself in unforgettable travel experiences.</p>
+  </div>
+
+  <div class="row g-4">
+    <!-- Experience Card 1 -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card shadow-sm h-100 experience-card hover-lift transition-card">
+        <img src="https://plus.unsplash.com/premium_photo-1682390303366-7463dcbec281?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="card-img-top" alt="Adventure">
+        <div class="card-body">
+          <h5 class="card-title text-red">Ultimate Adventure in the Alps</h5>
+          <p class="card-text text-light-emphasis">Join us for a thrilling adventure through the snow-capped peaks of the Alps. Experience unforgettable moments...</p>
+          <a href="#" class="btn btn-outline-primary btn-sm mt-2">Explore More</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Experience Card 2 -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card shadow-sm h-100 experience-card hover-lift transition-card">
+        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=3546&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="card-img-top" alt="Beach">
+        <div class="card-body">
+          <h5 class="card-title text-red">Beach Getaway in Bali</h5>
+          <p class="card-text text-light-emphasis">Relax and rejuvenate on the pristine beaches of Bali. From sunrise yoga to sunset cocktails, we have it all.</p>
+          <a href="#" class="btn btn-outline-primary btn-sm mt-2">Explore More</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Experience Card 3 -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card shadow-sm h-100 experience-card hover-lift transition-card">
+        <img src="https://images.unsplash.com/photo-1726326477267-f36f1740ad8e?q=80&w=3538&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="card-img-top" alt="Cultural Experience">
+        <div class="card-body">
+          <h5 class="card-title text-red">Cultural Immersion in Kyoto</h5>
+          <p class="card-text text-light-emphasis">Delve into the culture of Kyoto with local traditions, cooking classes, and beautiful temple visits.</p>
+          <a href="#" class="btn btn-outline-primary btn-sm mt-2">Explore More</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center mt-5">
+    <a href="#" class="btn btn-dark px-4 py-2 transition-scale">See All Experiences</a>
+  </div>
+</div>
+
+<style>
+  :root {
+    --light-card-bg: #ffffff;
+    --dark-card-bg: #1f1f1f;
+    --text-light: #f1f1f1;
+    --text-muted: #cccccc;
+    --card-title-red: #e53e3e; /* Red color for card titles */
+  }
+
+  .experience-page .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 1rem;
+    overflow: hidden;
+    background: var(--light-card-bg);
+  }
+
+  body.dark-mode .experience-page .card {
+    background: var(--dark-card-bg);
+  }
+
+  body.dark-mode .card-title,
+  body.dark-mode .card-text,
+  body.dark-mode .lead {
+    color: var(--text-light) !important;
+  }
+
+  body.dark-mode .lead {
+    color: var(--text-muted) !important;
+  }
+
+  .card-title {
+    color: var(--card-title-red) !important; /* Ensuring card title is red in all modes */
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .transition-card {
+    transition: all 0.3s ease-in-out;
+  }
+
+  .transition-scale {
+    transition: transform 0.2s ease;
+  }
+
+  .transition-scale:hover {
+    transform: scale(1.05);
+  }
+
+  .fade-in {
+    animation: fadeInUp 1s ease forwards;
+  }
+
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

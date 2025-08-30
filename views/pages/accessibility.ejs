@@ -1,0 +1,126 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container my-5 accessibility-page fade-in">
+  <div class="text-center mb-5">
+    <h1 class="display-5 fw-bold text-primary">Accessibility at Wanderlust</h1>
+    <p class="lead text-light-emphasis">Creating inclusive experiences for all travelers.</p>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-6">
+      <div class="card shadow-lg p-3 h-100 hover-lift transition-card accessibility-card">
+        <div class="card-body">
+          <h4 class="card-title text-light">Our Commitment</h4>
+          <p class="card-text text-light-emphasis">
+            At Wanderlust, accessibility is fundamental to our mission. We strive to build a platform where everyone,
+            regardless of ability, can explore the world with confidence. Our website follows web accessibility
+            guidelines (WCAG 2.1), ensuring screen reader compatibility, keyboard navigation, and high contrast support.
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6">
+      <div class="card shadow-lg p-3 h-100 hover-lift transition-card accessibility-card">
+        <div class="card-body">
+          <h4 class="card-title text-light">Accessible Stays</h4>
+          <p class="card-text text-light-emphasis">
+            We've added new filters to help you find listings with accessible features like step-free entrances,
+            roll-in showers, wide doorways, and more. Hosts can also provide detailed descriptions and photos of
+            accessibility features to help you choose with ease and confidence.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mt-4">
+    <div class="col-md-6">
+      <div class="card shadow-lg p-3 h-100 hover-lift transition-card accessibility-card">
+        <div class="card-body">
+          <h4 class="card-title text-light">Support & Feedback</h4>
+          <p class="card-text text-light-emphasis">
+            Have questions or feedback regarding accessibility? We’re always listening. Our dedicated support team
+            is available to assist users with disabilities. We value your input and constantly improve based on your experience.
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6">
+      <div class="card shadow-lg p-3 h-100 hover-lift transition-card accessibility-card">
+        <div class="card-body">
+          <h4 class="card-title text-light">Host Awareness</h4>
+          <p class="card-text text-light-emphasis">
+            We're building a community that values inclusivity. Hosts are encouraged to understand diverse needs
+            and describe accessibility options clearly. We're also launching training tools to help hosts welcome every guest with care.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center mt-5">
+    <a href="/help" class="btn btn-outline-primary btn-lg px-4 py-2 transition-scale">Visit Help Center</a>
+  </div>
+</div>
+
+<style>
+  :root {
+    --light-card-bg: #ffffff;
+    --dark-card-bg: #1f1f1f;
+    --text-light: #f1f1f1;
+    --text-muted: #cccccc;
+  }
+
+  .fade-in {
+    animation: fadeInUp 0.8s ease-in-out;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .transition-card {
+    transition: all 0.3s ease-in-out;
+    border-radius: 1rem;
+  }
+
+  .transition-scale {
+    transition: transform 0.2s ease;
+  }
+
+  .transition-scale:hover {
+    transform: scale(1.05);
+  }
+
+  .accessibility-card {
+    background: var(--light-card-bg);
+  }
+
+  body.dark-mode .accessibility-card {
+    background: var(--dark-card-bg);
+  }
+
+  body.dark-mode .card-title,
+  body.dark-mode .card-text,
+  body.dark-mode .lead {
+    color: var(--text-light) !important;
+  }
+
+  body.dark-mode .lead {
+    color: var(--text-muted) !important;
+  }
+
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

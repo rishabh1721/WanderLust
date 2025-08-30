@@ -1,0 +1,132 @@
+
+<%- layout('layouts/boilerplate') %>
+<style>
+  :root {
+    --text-color: #212529;
+    --bg-color: #ffffff;
+    --card-bg: #ffffff;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --gradient: linear-gradient(135deg, #5d3fd3, #00c6ff);
+  }
+
+  [data-theme="dark"] {
+    --text-color: #e1e1e1;
+    --bg-color: #0f0f0f;
+    --card-bg: #1c1c1c;
+    --shadow-color: rgba(255, 255, 255, 0.05);
+  }
+
+  html, body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Poppins', sans-serif;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  .section-heading {
+    font-weight: 700;
+    font-size: 2rem;
+    background: var(--gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    animation: fadeIn 0.8s ease-in-out;
+  }
+
+  .card {
+    background-color: var(--card-bg);
+    border-radius: 15px;
+    box-shadow: 0 8px 20px var(--shadow-color);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  }
+
+  .card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 30px var(--shadow-color);
+  }
+
+  .qr-image {
+    max-width: 250px;
+    width: 100%;
+    object-fit: cover;
+    margin-bottom: 1rem;
+  }
+
+  .btn-success {
+    background: var(--gradient);
+    border: none;
+    color: white;
+    font-weight: bold;
+    padding: 12px 24px;
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  }
+
+  .btn-success:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+
+  .reminder-box {
+    display: none;
+    background: #fef3c7;
+    color: #92400e;
+    padding: 1rem;
+    margin-top: 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 500;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+<div class="container my-5 p-4">
+  <h2 class="section-heading">Scan & Pay to Confirm Booking</h2>
+  <div class="card text-center p-4 mx-auto" style="max-width: 360px;">
+    <img src="<%= qrCodeDataURL %>" alt="Payment QR Code" class="qr-image mx-auto" />
+    <p><strong>Booking ID:</strong> <%= bookingId %></p>
+    <p><strong>Amount:</strong> ₹<%= amount %></p>
+    <p>Scan this QR code using your UPI app.</p>
+    <p>This page will remind you in <strong><span id="countdown-timer">30</span> seconds</strong> to confirm payment.</p>
+  </div>
+
+  <form action="/listings/<%= listing._id %>/book/<%= bookingId %>/confirm" method="POST" class="text-center mt-4">
+    <button type="submit" class="btn btn-success">I Have Paid ✅</button>
+  </form>
+  
+
+  <div id="reminder" class="reminder-box">
+    ⏳ If you've paid, don’t forget to click the “I Have Paid ✅” button!
+  </div>
+</div>
+
+<script>
+  let secondsLeft = 30;
+  const timerEl = document.getElementById('countdown-timer');
+  const reminderBox = document.getElementById('reminder');
+
+  const countdown = setInterval(() => {
+    if (secondsLeft > 0) {
+      secondsLeft--;
+      timerEl.textContent = secondsLeft;
+    } else {
+      clearInterval(countdown);
+      reminderBox.style.display = 'block';
+    }
+  }, 1000);
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const theme = localStorage.getItem('theme');
+    if (theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+    }
+  });
+</script>

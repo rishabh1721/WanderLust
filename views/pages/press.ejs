@@ -1,0 +1,77 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container py-5 fade-in">
+  <div class="text-center mb-5">
+    <h1 class="display-5 fw-bold text-red">In the Press</h1>
+    <p class="text-muted lead">See how Wanderlust is making headlines across the world of travel, tech, and hospitality.</p>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100 shadow-sm press-card border-0 hover-zoom transition-fade">
+        <img src="https://images.unsplash.com/photo-1706752208267-86a9d2573626?q=80&w=3111&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="card-img-top" alt="Press Coverage">
+        <div class="card-body">
+          <h5 class="card-title text-red">Wanderlust featured in The Travel Times</h5>
+          <p class="card-text text-yellow">"Wanderlust has reimagined the future of personalized travel experiences." — March 2025</p>
+          <a href="#" class="btn btn-outline-primary btn-sm">Read Article</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100 shadow-sm press-card border-0 hover-zoom transition-fade">
+        <img src="https://images.unsplash.com/photo-1690207925026-d774e9571791?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="card-img-top" alt="Interview">
+        <div class="card-body">
+          <h5 class="card-title text-red">Founder Spotlight on TechWave</h5>
+          <p class="card-text text-yellow">"Innovating for meaningful getaways—Wanderlust's journey from startup to stardom."</p>
+          <a href="#" class="btn btn-outline-primary btn-sm">Watch Interview</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100 shadow-sm press-card border-0 hover-zoom transition-fade">
+        <img src="https://images.unsplash.com/photo-1559136555-9303baea8ebd?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="card-img-top" alt="Startup">
+        <div class="card-body">
+          <h5 class="card-title text-red">Top 10 Startups in TravelTech</h5>
+          <p class="card-text text-yellow">Wanderlust is listed among the top disruptors in global travel tech for 2025.</p>
+          <a href="#" class="btn btn-outline-primary btn-sm">Full List</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .hover-zoom {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .hover-zoom:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  .fade-in {
+    animation: fadeInUp 1s ease-in-out;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .text-red {
+    color: #e53e3e !important; /* Red color for titles */
+  }
+
+  .text-yellow {
+    color: #ffcc00 !important; /* Yellow color for descriptions */
+  }
+</style>

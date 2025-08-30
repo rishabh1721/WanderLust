@@ -1,0 +1,96 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container my-5 fade-in">
+  <div class="text-center mb-5">
+    <h1 class="display-5 fw-bold text-skyblue">Explore Top Destinations</h1>
+    <p class="lead text-muted">Discover breathtaking locations around the world, curated just for you.</p>
+  </div>
+
+  <!-- Feature Destinations -->
+  <section class="row g-4">
+    <% const destinations = [
+      { title: "Paris, France", img: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34", desc: "Wander through cobblestone streets and enjoy the magic of the Eiffel Tower." },
+      { title: "Kyoto, Japan", img: "https://images.unsplash.com/photo-1509057199576-632a47484ece", desc: "Experience the peaceful temples and cherry blossoms of ancient Japan." },
+      { title: "Marrakech, Morocco", img: "https://images.unsplash.com/photo-1610577884911-acd4cd21dcaf?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", desc: "Vibrant souks, colorful tiles, and exotic cuisine await you in Morocco." },
+      { title: "Santorini, Greece", img: "https://images.unsplash.com/photo-1603565816030-6b389eeb23cb?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", desc: "Relax in whitewashed villas overlooking the endless blue sea." },
+      { title: "Reykjavik, Iceland", img: "https://images.unsplash.com/photo-1500043357865-c6b8827edf10?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", desc: "Chase the northern lights and explore volcanic landscapes." },
+      { title: "Cape Town, South Africa", img: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1", desc: "Hike Table Mountain and explore stunning beaches and wineries." }
+    ]; %>
+
+    <% destinations.forEach(d => { %>
+      <div class="col-md-6 col-lg-4">
+        <div class="card shadow transition-card hover-zoom border-0">
+          <img src="<%= d.img %>" class="card-img-top rounded-top" alt="<%= d.title %>">
+          <div class="card-body">
+            <h5 class="card-title text-red"><%= d.title %></h5>
+            <p class="card-text text-yellow"><%= d.desc %></p>
+            <a href="#" class="btn btn-sm btn-outline-primary">Explore</a>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  </section>
+
+  <!-- Call to Action -->
+  <div class="text-center mt-5">
+    <h4 class="fw-bold text-red">Start your next adventure</h4>
+    <p class="text-muted">Ready to pack your bags? Discover more hidden gems with Wanderlust.</p>
+    <a href="/explore" class="btn btn-primary px-4 py-2">Browse More</a>
+  </div>
+</div>
+
+<style>
+  .fade-in {
+    animation: fadeInUp 1s ease-out;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .hover-zoom {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .hover-zoom:hover {
+    transform: scale(1.03);
+    box-shadow: 0 16px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .transition-card {
+    border-radius: 1rem;
+    overflow: hidden;
+  }
+
+  .btn-outline-primary:hover {
+    background-color: #0d6efd;
+    color: #fff;
+  }
+
+  .text-red {
+    color: #e53e3e !important; /* Red color for titles */
+  }
+
+  .text-yellow {
+    color: #ffcc00 !important; /* Yellow color for paragraphs */
+  }
+
+  /* Dark Mode styles */
+  body.dark-mode .card {
+    background-color: #000;
+  }
+
+  body.dark-mode .card-title,
+  body.dark-mode .card-text,
+  body.dark-mode .lead,
+  body.dark-mode .fst-italic {
+    color: var(--text-light) !important;
+  }
+</style>

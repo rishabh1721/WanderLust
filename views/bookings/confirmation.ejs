@@ -1,0 +1,131 @@
+<% layout('layouts/boilerplate') %>
+
+<!-- === CUSTOM STYLES === -->
+<style>
+  :root {
+    --text-color: #e63946; /* Red */
+    --bg-color: #ffffff;
+    --card-bg: #ffffff;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --primary: #5d3fd3;
+    --gradient: linear-gradient(135deg, #5d3fd3, #00c6ff);
+    --success: #28a745;
+    --highlight: #f1c40f; /* Yellow */
+  }
+
+  [data-theme="dark"] {
+    --text-color: #e1e1e1;
+    --bg-color: #0f0f0f;
+    --card-bg: #1c1c1c;
+    --shadow-color: rgba(255, 255, 255, 0.05);
+  }
+
+  body, html {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Poppins', sans-serif;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+  }
+
+  .section-heading {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: var(--gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: var(--highlight); /* Yellow */
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 2rem;
+    animation: fadeIn 1s ease-in-out;
+  }
+
+  .card {
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: 0 12px 24px var(--shadow-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    padding: 2rem;
+  }
+
+  .card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 16px 32px rgba(128, 0, 128, 0.3);
+  }
+
+  .list-group {
+    padding: 0;
+    margin: 0;
+  }
+
+  .list-group-item {
+    background: none;
+    border: none;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--shadow-color);
+    font-size: 1.1rem;
+    text-align: left;
+    color: var(--text-color); /* Red */
+  }
+
+  .list-group-item:last-child {
+    border-bottom: none;
+  }
+
+  .btn-primary {
+    background: var(--gradient);
+    border: none;
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 12px 30px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-primary:hover {
+    opacity: 0.95;
+    transform: translateY(-2px) scale(1.05);
+  }
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<!-- === PAGE CONTENT === -->
+<div class="container text-center" data-theme="<%= theme %>">
+  <h1 class="section-heading">🎉 Booking Confirmed!</h1>
+  <p class="lead mb-4" style="color: var(--text-color);">Thank you for your payment. Here's your booking summary:</p>
+
+  <div class="card mx-auto" style="max-width: 700px;">
+    <ul class="list-group text-start">
+      <li class="list-group-item"><strong>Listing:</strong> <%= booking.listing.title %></li>
+      <li class="list-group-item"><strong>Check-in:</strong> <%= booking.checkIn.toISOString().slice(0,10) %></li>
+      <li class="list-group-item"><strong>Check-out:</strong> <%= booking.checkOut.toISOString().slice(0,10) %></li>
+      <li class="list-group-item"><strong>Guests:</strong> <%= booking.guests %></li>
+      <li class="list-group-item"><strong>Room Type:</strong> <%= booking.roomType %></li>
+      <% if (booking.breakfast) { %>
+        <li class="list-group-item"><strong>Breakfast:</strong> Included 🍳</li>
+      <% } %>
+      <li class="list-group-item"><strong>Total Paid:</strong> ₹<%= booking.total.toLocaleString('en-IN') %></li>
+      <li class="list-group-item"><strong>Payment ID:</strong> <%= booking.paymentId %></li>
+    </ul>
+  </div>
+
+  <a href="/" class="btn btn-primary mt-5">Back to Home</a>
+</div>

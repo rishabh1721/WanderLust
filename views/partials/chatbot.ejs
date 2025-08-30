@@ -1,0 +1,29 @@
+<!-- views/partials/chatbot.ejs -->
+<div id="chatbot-container" aria-live="polite">
+    <button
+      id="chatbot-toggle"
+      class="chat-toggle"
+      aria-label="Open chat support"
+    >💬</button>
+  
+    <div id="chatbot-window" class="chat-window hidden" role="dialog" aria-modal="true" aria-label="Chat support window">
+      <header class="chat-header">
+        <h2 class="chat-title">Support Chat</h2>
+        <button id="chatbot-close" class="chat-close" aria-label="Close chat window">&times;</button>
+      </header>
+      <div id="chatbot-body" class="chat-body" tabindex="0"></div>
+      <div id="chatbot-typing" class="chat-typing hidden">Support is typing…</div>
+      <form id="chatbot-form" class="chat-form" aria-label="Chat input form">
+        <label for="chatbot-input" class="visually-hidden">Type your message</label>
+        <input
+          id="chatbot-input"
+          type="text"
+          autocomplete="off"
+          placeholder="Type your message…"
+          required
+        />
+        <button type="submit" class="chat-send" aria-label="Send message">➤</button>
+      </form>
+    </div>
+  </div>
+  
